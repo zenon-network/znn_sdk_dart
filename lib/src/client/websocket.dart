@@ -29,6 +29,9 @@ class WsClient implements Client {
 
   bool? _lastRestartedEvent;
 
+  final kMaxRetries = 3;
+  int _retries = 0;
+
   Stream<bool> get restartedStream =>
       restartedStreamController.stream.asBroadcastStream();
 
@@ -91,7 +94,15 @@ class WsClient implements Client {
         continue;
       } on SocketException {
         _lastRestartedEvent = false;
+
         if (retry == true) {
+          _retries++;
+
+          if (_retries >= kMaxRetries) {
+            _retries = 0;
+            return false;
+          }
+
           await Future.delayed(Duration(seconds: 5));
         }
       }
