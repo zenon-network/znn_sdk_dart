@@ -24,7 +24,9 @@ class WsClient implements Client {
 
   String url = 'ws://peers.zenon.network:35998';
   int _maxRestarts = 3;
+  int _maxTimeouts = 3;
   int _restarts = 0;
+  int _timeouts = 0;
   Duration _timeoutDuration = Duration(seconds: 5);
   Duration _pingIntervalDuration = Duration(seconds: 5);
   Duration _restartDelayDuration = Duration(seconds: 5);
@@ -51,6 +53,7 @@ class WsClient implements Client {
   void setConfig({
     required String url,
     int maxRestarts = 3,
+    int maxTimeouts = 3,
     Duration timeoutDuration = const Duration(seconds: 5),
     Duration pingIntervalDuration = const Duration(seconds: 5),
     Duration restartDelayDuration = const Duration(seconds: 5),
@@ -61,6 +64,7 @@ class WsClient implements Client {
 
     this.url = url;
     this._maxRestarts = maxRestarts;
+    this._maxTimeouts = maxTimeouts;
     this._timeoutDuration = timeoutDuration;
     this._pingIntervalDuration = pingIntervalDuration;
     this._restartDelayDuration = restartDelayDuration;
@@ -110,12 +114,19 @@ class WsClient implements Client {
         }
         return true;
       } on TimeoutException {
+        _timeouts++;
+
+        if (_timeouts >= _maxTimeouts) {
+          _timeouts = 0;
+          return false;
+        }
+
         continue;
       } on SocketException {
         _lastRestartedEvent = false;
 
         if (retry == true) {
-          _maxRestarts++;
+          _restarts++;
 
           if (_restarts >= _maxRestarts) {
             _restarts = 0;
