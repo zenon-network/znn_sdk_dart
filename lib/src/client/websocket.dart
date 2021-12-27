@@ -22,7 +22,14 @@ class WsClient implements Client {
 
   WebsocketStatus _websocketIntendedState;
 
-  String? url;
+  String url = 'ws://peers.zenon.network:35998';
+  int _maxRestarts = 3;
+  int _maxTimeouts = 3;
+  int _restarts = 0;
+  int _timeouts = 0;
+  Duration _timeoutDuration = Duration(seconds: 5);
+  Duration _pingIntervalDuration = Duration(seconds: 5);
+  Duration _restartDelayDuration = Duration(seconds: 5);
 
   StreamController<bool> restartedStreamController =
       StreamController.broadcast();
@@ -43,6 +50,26 @@ class WsClient implements Client {
     return true;
   }
 
+  void setConfig({
+    required String url,
+    int maxRestarts = 3,
+    int maxTimeouts = 3,
+    Duration timeoutDuration = const Duration(seconds: 5),
+    Duration pingIntervalDuration = const Duration(seconds: 5),
+    Duration restartDelayDuration = const Duration(seconds: 5),
+  }) {
+    if (maxRestarts <= 0) {
+      throw ZnnSdkException('Invalid `maxRestarts` parameter value');
+    }
+
+    this.url = url;
+    this._maxRestarts = maxRestarts;
+    this._maxTimeouts = maxTimeouts;
+    this._timeoutDuration = timeoutDuration;
+    this._pingIntervalDuration = pingIntervalDuration;
+    this._restartDelayDuration = restartDelayDuration;
+  }
+
   void addOnConnectionEstablishedCallback(
       ConnectionEstablishedCallback callback) {
     if (_websocketIntendedState == WebsocketStatus.running) {
@@ -51,19 +78,18 @@ class WsClient implements Client {
     _onConnectionCallbacks.add(callback);
   }
 
-  Future<bool> initialize(String url, {bool retry = true}) async {
-    this.url = url;
+  Future<bool> initialize({bool retry = true}) async {
     logger.info('Initializing websocket connection ...');
     _websocketIntendedState = WebsocketStatus.connecting;
 
     do {
-      var ws = WebSocket.connect(url).timeout(Duration(seconds: 5));
+      var ws = WebSocket.connect(url).timeout(_timeoutDuration);
 
       try {
         var wsConnection = await ws;
         logger.info('Websocket connection successfully established');
 
-        wsConnection.pingInterval = Duration(seconds: 5);
+        wsConnection.pingInterval = _pingIntervalDuration;
         var wsStream = jsonDocument
             .bind(IOWebSocketChannel(wsConnection).cast<String>())
             .transformStream(ignoreFormatExceptions);
@@ -88,11 +114,26 @@ class WsClient implements Client {
         }
         return true;
       } on TimeoutException {
+        _timeouts++;
+
+        if (_timeouts >= _maxTimeouts) {
+          _timeouts = 0;
+          return false;
+        }
+
         continue;
       } on SocketException {
         _lastRestartedEvent = false;
+
         if (retry == true) {
-          await Future.delayed(Duration(seconds: 5));
+          _restarts++;
+
+          if (_restarts >= _maxRestarts) {
+            _restarts = 0;
+            return false;
+          }
+
+          await Future.delayed(_restartDelayDuration);
         }
       }
     } while (retry);
@@ -110,7 +151,7 @@ class WsClient implements Client {
     }
     if (_wsRpc2Client != null && _wsRpc2Client!.isClosed == true) {
       logger.info('Restarting websocket connection ...');
-      await initialize(url!, retry: true);
+      await initialize(retry: true);
       logger.info('Websocket connection successfully restarted');
     }
   }
