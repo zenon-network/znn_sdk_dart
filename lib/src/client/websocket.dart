@@ -5,8 +5,7 @@ import 'package:json_rpc_2/json_rpc_2.dart' as jsonrpc2;
 import 'package:json_rpc_2/src/utils.dart';
 import 'package:stream_channel/stream_channel.dart';
 import 'package:web_socket_channel/io.dart';
-import 'package:znn_sdk_dart/src/client/client.dart';
-import 'package:znn_sdk_dart/src/global.dart';
+import 'package:znn_sdk_dart/znn_sdk_dart.dart';
 
 enum WebsocketStatus { uninitialized, connecting, running, stopped }
 
@@ -63,6 +62,7 @@ class WsClient implements Client {
         var wsConnection = await ws;
         logger.info('Websocket connection successfully established');
 
+        // check connection health each 5 seconds
         wsConnection.pingInterval = Duration(seconds: 5);
         var wsStream = jsonDocument
             .bind(IOWebSocketChannel(wsConnection).cast<String>())

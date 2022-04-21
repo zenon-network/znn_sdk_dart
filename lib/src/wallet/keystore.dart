@@ -5,7 +5,8 @@ import 'package:cryptography/cryptography.dart' as cryptography;
 import 'package:hex/hex.dart';
 import 'package:znn_sdk_dart/src/crypto/crypto.dart';
 import 'package:znn_sdk_dart/src/model/primitives.dart';
-import 'package:znn_sdk_dart/src/wallet/wallet.dart';
+import 'package:znn_sdk_dart/src/wallet/derivation.dart';
+import 'package:znn_sdk_dart/src/wallet/keypair.dart';
 
 class KeyStore {
   String? mnemonic;
@@ -48,7 +49,8 @@ class KeyStore {
   }
 
   KeyPair getKeyPair([int index = 0]) {
-    return KeyPair(Crypto.deriveKey(Derivation.getDerivationAccount(index), seed!));
+    return KeyPair(
+        Crypto.deriveKey(Derivation.getDerivationAccount(index), seed!));
   }
 
   Future<List<Address?>> deriveAddressesByRange(int left, int right) async {

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:math';
-
 import 'package:hex/hex.dart';
 
 class BytesUtils {
@@ -21,6 +20,7 @@ class BytesUtils {
   }
 
   static List<int> encodeBigInt(BigInt number) {
+    // Not handling negative numbers. Decide how you want to do that.
     var size = (number.bitLength + 7) >> 3;
     var result = List<int>.filled(size, 0, growable: true);
     for (var i = 0; i < size; i++) {

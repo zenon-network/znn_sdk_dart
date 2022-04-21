@@ -1,7 +1,5 @@
 import 'package:bech32/bech32.dart';
 
-export 'package:bech32/bech32.dart';
-
 List<int> convertBech32Bits(List<int> data, int from, int to, bool pad) {
   var acc = 0;
   var bits = 0;

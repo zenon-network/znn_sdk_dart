@@ -5,7 +5,7 @@ import 'package:path/path.dart' as path;
 
 export 'package:logging/logging.dart' show Level;
 
-const znnSdkVersion = '0.0.1';
+const znnSdkVersion = '0.0.4';
 const znnRootDirectory = 'znn';
 
 class ZnnPaths {
@@ -13,7 +13,10 @@ class ZnnPaths {
   Directory wallet;
   Directory cache;
 
-  ZnnPaths({required Directory main, required Directory wallet, required Directory cache})
+  ZnnPaths(
+      {required Directory main,
+      required Directory wallet,
+      required Directory cache})
       : main = main,
         wallet = wallet,
         cache = cache;
@@ -22,16 +25,22 @@ class ZnnPaths {
 ZnnPaths _getDefaultPaths() {
   late Directory main;
   if (Platform.isLinux) {
-    main = Directory(path.join(Platform.environment['HOME']!, '.$znnRootDirectory'));
+    main = Directory(
+        path.join(Platform.environment['HOME']!, '.$znnRootDirectory'));
   } else if (Platform.isMacOS) {
-    main = Directory(path.join(Platform.environment['HOME']!, 'Library', znnRootDirectory));
+    main = Directory(
+        path.join(Platform.environment['HOME']!, 'Library', znnRootDirectory));
   } else if (Platform.isWindows) {
-    main = Directory(path.join(Platform.environment['AppData']!, znnRootDirectory));
+    main = Directory(
+        path.join(Platform.environment['AppData']!, znnRootDirectory));
   } else {
-    main = Directory(path.join(Platform.environment['HOME']!, znnRootDirectory));
+    main =
+        Directory(path.join(Platform.environment['HOME']!, znnRootDirectory));
   }
   return ZnnPaths(
-      main: main, wallet: Directory(path.join(main.path, 'wallet')), cache: Directory(path.join(main.path, 'syrius')));
+      main: main,
+      wallet: Directory(path.join(main.path, 'wallet')),
+      cache: Directory(path.join(main.path, 'syrius')));
 }
 
 ZnnPaths znnDefaultPaths = _getDefaultPaths();
@@ -49,7 +58,7 @@ void ensureDirectoriesExist() {
   return;
 }
 
-int netId = 1; // mainnet
+int netId = 1; // Alphanet
 
 final logger = Logger('ZNN-SDK');
 

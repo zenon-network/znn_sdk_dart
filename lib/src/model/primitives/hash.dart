@@ -44,7 +44,7 @@ class Hash {
       return true;
     }
 
-    return DeepCollectionEquality().equals(hash, hash.getBytes());
+    return DeepCollectionEquality().equals(this.getBytes(), hash.getBytes());
   }
 
   int compareTo(Hash otherHash) =>

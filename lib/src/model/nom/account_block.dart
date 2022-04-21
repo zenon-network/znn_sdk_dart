@@ -1,5 +1,5 @@
 import 'package:znn_sdk_dart/src/model/model.dart';
-import 'package:znn_sdk_dart/src/model/primitives.dart';
+import 'package:znn_sdk_dart/src/model/primitives/hash.dart';
 
 class AccountBlockConfirmationDetail {
   int numConfirmations;
@@ -31,7 +31,7 @@ class AccountBlock extends AccountBlockTemplate {
 
   Token? token;
 
-  /// Available if account-block is confirmed, null otherwise
+  // Available if account-block is confirmed, null otherwise
   AccountBlockConfirmationDetail? confirmationDetail;
 
   AccountBlock? pairedAccountBlock;
@@ -78,7 +78,7 @@ class AccountBlockList {
   int? count;
   List<AccountBlock>? list;
 
-  /// If true, there are more elements that can be retrieved
+  /// If true, there are more than `count` elements, but only these can be retrieved
   bool? more;
 
   AccountBlockList({this.count, this.list, this.more});

@@ -3,8 +3,8 @@ class Peer {
   String ip;
 
   Peer.fromJson(Map<String, dynamic> json)
-      : publicKey = json["publicKey"],
-        ip = json["ip"];
+      : publicKey = json['publicKey'],
+        ip = json['ip'];
 }
 
 class NetworkInfo {
@@ -13,10 +13,9 @@ class NetworkInfo {
   List<Peer> peers;
 
   NetworkInfo.fromJson(Map<String, dynamic> json)
-      : numPeers = json["numPeers"],
-        self = Peer.fromJson(json["self"]),
-        peers = (List<Map<String, dynamic>>.from(json['peers'])).map((f) => Peer.fromJson(f))
-      .toList();
+      : numPeers = json['numPeers'],
+        self = Peer.fromJson(json['self']),
+        peers = (List<Map<String, dynamic>>.from(json['peers'])).map((f) => Peer.fromJson(f)).toList();
 }
 
 class ProcessInfo {
@@ -39,12 +38,25 @@ class OsInfo {
   int numGoroutine;
 
   OsInfo.fromJson(Map<String, dynamic> json)
-    : os = json['os'],
-      platform = json['platform'],
-        platformVersion = json['platformVersion'],
+      : os = json['os'],
+        platform = json['platform'],
+        platformVersion = json['platform'],
         kernelVersion = json['kernelVersion'],
         memoryTotal = json['memoryTotal'],
         memoryFree = json['memoryFree'],
         numCPU = json['numCPU'],
         numGoroutine = json['numGoroutine'];
+}
+
+enum SyncState { unknown, syncing, syncDone, notEnoughPeers }
+
+class SyncInfo {
+  SyncState state;
+  int currentHeight;
+  int targetHeight;
+
+  SyncInfo.fromJson(Map<String, dynamic> json)
+      : state = SyncState.values[json['state'] ?? 0],
+        currentHeight = json['currentHeight'],
+        targetHeight = json['targetHeight'];
 }

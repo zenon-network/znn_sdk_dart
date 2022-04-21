@@ -1,6 +1,7 @@
+import 'package:bech32/bech32.dart';
 import 'package:collection/collection.dart';
 import 'package:sha3/sha3.dart';
-import 'package:znn_sdk_dart/src/model/primitives/bech32.dart';
+import 'package:znn_sdk_dart/src/model/primitives.dart';
 
 final Address emptyAddress =
     Address.parse('z1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsggv2f');
@@ -20,6 +21,8 @@ final Address sporkAddress =
     Address.parse('z1qxemdeddedxsp0rkxxxxxxxxxxxxxxxx956u48');
 final Address acceleratorAddress =
     Address.parse('z1qxemdeddedxaccelerat0rxxxxxxxxxxp4tk22');
+final Address bridgeAddress =
+    Address.parse('z1qzlytaqdahg5t02nz5096frflfv7dm3y7yxmg7');
 
 final List<Address> embeddedContractAddresses = [
   plasmaAddress,

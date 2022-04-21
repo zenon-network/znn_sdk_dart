@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:znn_sdk_dart/src/client/client.dart';
 import 'package:znn_sdk_dart/src/embedded/embedded.dart';
 import 'package:znn_sdk_dart/src/model/model.dart';
+import 'package:znn_sdk_dart/src/model/primitives/address.dart';
+import 'package:znn_sdk_dart/src/model/primitives/token_standard.dart';
 
 class TokenApi {
   late Client client;
@@ -60,7 +62,7 @@ class TokenApi {
         ]));
   }
 
-  AccountBlockTemplate mint(
+  AccountBlockTemplate mintToken(
       TokenStandard tokenStandard, int amount, Address receiveAddress) {
     return AccountBlockTemplate.callContract(
         tokenAddress,

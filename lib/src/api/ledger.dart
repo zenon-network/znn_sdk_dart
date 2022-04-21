@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:znn_sdk_dart/src/client/client.dart';
 import 'package:znn_sdk_dart/src/model/model.dart';
+import 'package:znn_sdk_dart/src/model/primitives/address.dart';
+import 'package:znn_sdk_dart/src/model/primitives/hash.dart';
 
 class LedgerApi {
   late Client client;
@@ -33,19 +35,19 @@ class LedgerApi {
   }
 
   // Blocks
-  Future<AccountBlock?> getFrontierBlock(Address? address) async {
+  Future<AccountBlock?> getFrontierAccountBlock(Address? address) async {
     var response = await client
         .sendRequest('ledger.getFrontierAccountBlock', [address.toString()]);
     return response == null ? null : AccountBlock.fromJson(response);
   }
 
-  Future<AccountBlock?> getBlockByHash(Hash? hash) async {
+  Future<AccountBlock?> getAccountBlockByHash(Hash? hash) async {
     var response = await client
         .sendRequest('ledger.getAccountBlockByHash', [hash.toString()]);
     return response == null ? null : AccountBlock.fromJson(response);
   }
 
-  Future<AccountBlockList> getBlocksByHeight(Address address,
+  Future<AccountBlockList> getAccountBlocksByHeight(Address address,
       [int height = 1, int count = rpcMaxPageSize]) async {
     var response = await client.sendRequest(
         'ledger.getAccountBlocksByHeight', [address.toString(), height, count]);
@@ -53,7 +55,7 @@ class LedgerApi {
   }
 
   /// pageIndex = 0 returns the most recent account blocks sorted descending by height
-  Future<AccountBlockList> getBlocksByPage(Address address,
+  Future<AccountBlockList> getAccountBlocksByPage(Address address,
       {int pageIndex = 0, int pageSize = rpcMaxPageSize}) async {
     var response = await client.sendRequest('ledger.getAccountBlocksByPage',
         [address.toString(), pageIndex, pageSize]);

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:znn_sdk_dart/src/client/client.dart';
-import 'package:znn_sdk_dart/src/model/model.dart';
+import 'package:znn_sdk_dart/src/model/primitives/address.dart';
 
 class SubscribeApi {
   late Client client;
@@ -15,18 +15,18 @@ class SubscribeApi {
         as String?;
   }
 
-  Future<String?> toAllAccountEvents() async {
+  Future<String?> toAllAccountBlocks() async {
     return await client.sendRequest('ledger.subscribe', ['allAccountBlocks'])
         as String?;
   }
 
-  Future<String?> toAccountEvents(Address address) async {
+  Future<String?> toAccountBlocksByAddress(Address address) async {
     return await client.sendRequest(
             'ledger.subscribe', ['accountBlocksByAddress', address.toString()])
         as String?;
   }
 
-  Future<String?> toUnreceivedAccountBlocks(Address address) async {
+  Future<String?> toUnreceivedAccountBlocksByAddress(Address address) async {
     return await client.sendRequest('ledger.subscribe',
         ['unreceivedAccountBlocksByAddress', address.toString()]) as String?;
   }

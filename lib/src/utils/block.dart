@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:hex/hex.dart';
 import 'package:znn_sdk_dart/src/global.dart';
 import 'package:znn_sdk_dart/src/model/model.dart';
+import 'package:znn_sdk_dart/src/model/primitives/hash.dart';
+import 'package:znn_sdk_dart/src/model/primitives/hash_height.dart';
 import 'package:znn_sdk_dart/src/pow/pow.dart';
 import 'package:znn_sdk_dart/src/utils/utils.dart';
 import 'package:znn_sdk_dart/src/wallet/keypair.dart';
@@ -78,7 +80,7 @@ class BlockUtils {
       AccountBlockTemplate accountBlockTemplate) async {
     var z = Zenon();
     var frontierAccountBlock =
-        await z.ledger.getFrontierBlock(accountBlockTemplate.address);
+        await z.ledger.getFrontierAccountBlock(accountBlockTemplate.address);
 
     var height = 1;
     Hash? previousHash = emptyHash;
@@ -111,7 +113,7 @@ class BlockUtils {
         throw Error();
       }
 
-      var sendBlock = await z.ledger.getBlockByHash(transaction.fromBlockHash);
+      var sendBlock = await z.ledger.getAccountBlockByHash(transaction.fromBlockHash);
       if (sendBlock == null) {
         throw Error();
       }
@@ -190,19 +192,17 @@ class BlockUtils {
       {KeyPair? blockSigningKey}) async {
     var z = Zenon();
 
-    if (transaction.difficulty == 0) {
-      transaction.address = (await blockSigningKey!.address)!;
-      var powParam = GetRequiredParam(
-          address: transaction.address,
-          blockType: transaction.blockType,
-          toAddress: transaction.toAddress,
-          data: transaction.data);
+    transaction.address = (await blockSigningKey!.address)!;
+    var powParam = GetRequiredParam(
+        address: transaction.address,
+        blockType: transaction.blockType,
+        toAddress: transaction.toAddress,
+        data: transaction.data);
 
-      var response =
-          await z.embedded.plasma.getRequiredPoWForAccountBlock(powParam);
-      if (response.requiredDifficulty != 0) {
-        return true;
-      }
+    var response =
+        await z.embedded.plasma.getRequiredPoWForAccountBlock(powParam);
+    if (response.requiredDifficulty == 0) {
+      return false;
     }
     return true;
   }

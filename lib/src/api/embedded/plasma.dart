@@ -1,6 +1,9 @@
-import 'package:znn_sdk_dart/src/embedded/embedded.dart';
 import 'package:znn_sdk_dart/src/client/client.dart';
+import 'package:znn_sdk_dart/src/embedded/embedded.dart';
 import 'package:znn_sdk_dart/src/model/model.dart';
+import 'package:znn_sdk_dart/src/model/primitives/address.dart';
+import 'package:znn_sdk_dart/src/model/primitives/hash.dart';
+import 'package:znn_sdk_dart/src/model/primitives/token_standard.dart';
 
 class PlasmaApi {
   late Client client;

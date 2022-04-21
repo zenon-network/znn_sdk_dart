@@ -82,12 +82,14 @@ class AccountBlockTemplate {
           fromBlockHash: fromBlockHash);
 
   factory AccountBlockTemplate.send(
-          Address toAddress, TokenStandard tokenStandard, int amount) =>
+          Address toAddress, TokenStandard tokenStandard, int amount, [List<int>? data,]) =>
       AccountBlockTemplate(
           blockType: BlockTypeEnum.userSend.index,
           toAddress: toAddress,
           tokenStandard: tokenStandard,
-          amount: amount);
+          amount: amount,
+          data: data,
+      );
 
   factory AccountBlockTemplate.callContract(Address toAddress,
           TokenStandard tokenStandard, int amount, List<int> data) =>
@@ -110,7 +112,7 @@ class AccountBlockTemplate {
             HashHeight.fromJson(json['momentumAcknowledged']),
         address = Address.parse(json['address']),
         toAddress = Address.parse(json['toAddress']),
-        amount = json['amount'],
+        amount = json['amount'].toInt(),
         tokenStandard = TokenStandard.parse(json['tokenStandard']),
         fusedPlasma = json["fusedPlasma"],
         data = (json['data'] == null

@@ -19,6 +19,8 @@ class PillarInfo {
   int revokeTimestamp;
   PillarEpochStats currentStats;
   int weight;
+  int producedMomentums;
+  int expectedMomentums;
 
   PillarInfo.fromJson(Map<String, dynamic> json)
       : name = json['name'],
@@ -33,7 +35,9 @@ class PillarInfo {
         revokeCooldown = json['revokeCooldown'],
         revokeTimestamp = json['revokeTimestamp'],
         currentStats = PillarEpochStats.fromJson(json['currentStats']),
-        weight = json['weight'];
+        weight = json['weight'],
+        producedMomentums = json['currentStats']['producedMomentums'],
+        expectedMomentums = json['currentStats']['expectedMomentums'];
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};

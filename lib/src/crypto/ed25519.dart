@@ -21,22 +21,25 @@ const int hardenedOffset = 0x80000000;
 
 class Ed25519 {
   static final int b = 256;
-  static final BigInt q = BigInt.parse('57896044618658097711785492504343953926634992332820282019728792003956564819949');
-  static final BigInt qm2 =
-      BigInt.parse('57896044618658097711785492504343953926634992332820282019728792003956564819947');
-  static final BigInt qp3 =
-      BigInt.parse('57896044618658097711785492504343953926634992332820282019728792003956564819952');
-  static final BigInt l = BigInt.parse('7237005577332262213973186563042994240857116359379907606001950938285454250989');
-  static final BigInt d =
-      BigInt.parse('-4513249062541557337682894930092624173785641285191125241628941591882900924598840740');
-  static final BigInt I = BigInt.parse('19681161376707505956807079304988542015446066515923890162744021073123829784752');
-  static final BigInt by =
-      BigInt.parse('46316835694926478169428394003475163141307993866256225615783033603165251855960');
-  static final BigInt bx =
-      BigInt.parse('15112221349535400772501151409588531511454012693041857206046113283949847762202');
+  static final BigInt q = BigInt.parse(
+      '57896044618658097711785492504343953926634992332820282019728792003956564819949');
+  static final BigInt qm2 = BigInt.parse(
+      '57896044618658097711785492504343953926634992332820282019728792003956564819947');
+  static final BigInt qp3 = BigInt.parse(
+      '57896044618658097711785492504343953926634992332820282019728792003956564819952');
+  static final BigInt l = BigInt.parse(
+      '7237005577332262213973186563042994240857116359379907606001950938285454250989');
+  static final BigInt d = BigInt.parse(
+      '-4513249062541557337682894930092624173785641285191125241628941591882900924598840740');
+  static final BigInt I = BigInt.parse(
+      '19681161376707505956807079304988542015446066515923890162744021073123829784752');
+  static final BigInt by = BigInt.parse(
+      '46316835694926478169428394003475163141307993866256225615783033603165251855960');
+  static final BigInt bx = BigInt.parse(
+      '15112221349535400772501151409588531511454012693041857206046113283949847762202');
   static final List<BigInt> B = [bx % q, by % q];
-  static final BigInt un =
-      BigInt.parse('57896044618658097711785492504343953926634992332820282019728792003956564819967');
+  static final BigInt un = BigInt.parse(
+      '57896044618658097711785492504343953926634992332820282019728792003956564819967');
 
   static final BigInt zero = BigInt.from(0);
   static final BigInt one = BigInt.from(1);
@@ -129,7 +132,8 @@ class Ed25519 {
     return hsum;
   }
 
-  static Future<Uint8List> signature(HashFunc f, Uint8List m, Uint8List? sk, Uint8List pk) async {
+  static Future<Uint8List> signature(
+      HashFunc f, Uint8List m, Uint8List? sk, Uint8List pk) async {
     var h = await hash(f, sk);
     var a = two.pow(b - 2);
     for (var i = 3; i < (b - 2); i++) {
@@ -211,7 +215,8 @@ class Ed25519 {
     return P;
   }
 
-  static Future<bool> checkvalid(HashFunc f, Uint8List s, Uint8List m, Uint8List pk) async {
+  static Future<bool> checkvalid(
+      HashFunc f, Uint8List s, Uint8List m, Uint8List pk) async {
     assert(s.length == b ~/ 4);
     assert(pk.length == b ~/ 8);
 
@@ -257,7 +262,8 @@ class Ed25519 {
         return BigInt.from(result);
       }
       var mid = start + ((end - start) >> 1);
-      var result = read(start, mid) + read(mid, end) * (BigInt.one << ((mid - start) * 8));
+      var result = read(start, mid) +
+          read(mid, end) * (BigInt.one << ((mid - start) * 8));
       return result;
     }
 
@@ -314,7 +320,8 @@ class Ed25519 {
 
   static KeyData derivePath(String path, String seed) {
     if (!Ed25519._pathRegex.hasMatch(path)) {
-      throw ArgumentError('Invalid derivation path. Expected BIP32 path format');
+      throw ArgumentError(
+          'Invalid derivation path. Expected BIP32 path format');
     }
     var master = getMasterKeyFromSeed(seed);
     var segments = path.split('/');

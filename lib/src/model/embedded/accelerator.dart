@@ -2,58 +2,72 @@ import 'package:znn_sdk_dart/src/model/embedded/common.dart';
 import 'package:znn_sdk_dart/src/model/primitives.dart';
 import 'package:znn_sdk_dart/src/utils/utils.dart';
 
-class Phase extends BaseProject {
+class Phase extends AcceleratorProject {
+  Hash projectId;
+  int acceptedTimestamp;
+
   Phase({
     required Hash id,
+    required Hash projectId,
     required String name,
     required String description,
     required String url,
-    required int fundsNeeded,
+    required int znnFundsNeeded,
+    required int qsrFundsNeeded,
     required int creationTimestamp,
+    required int acceptedTimestamp,
     required int status,
     required VoteBreakdown voteBreakdown,
-  }) : super(
+  })  : this.projectId = projectId,
+        this.acceptedTimestamp = acceptedTimestamp,
+        super(
           id: id,
           name: name,
           description: description,
           url: url,
-          fundsNeeded: fundsNeeded,
+          znnFundsNeeded: znnFundsNeeded,
+          qsrFundsNeeded: qsrFundsNeeded,
           creationTimestamp: creationTimestamp,
           statusInt: status,
           voteBreakdown: voteBreakdown,
         );
 
   factory Phase.fromJson(Map<String, dynamic> json) => Phase(
-        id: Hash.parse(json['id']),
-        name: json['name'],
-        description: json['description'],
-        url: json['url'],
-        fundsNeeded: json['fundsNeeded'],
-        creationTimestamp: json['creationTimestamp'],
-        status: json['status'],
+        id: Hash.parse(json['phase']['id']),
+        projectId: Hash.parse(json['phase']['projectID']),
+        name: json['phase']['name'],
+        description: json['phase']['description'],
+        url: json['phase']['url'],
+        znnFundsNeeded: json['phase']['znnFundsNeeded'],
+        qsrFundsNeeded: json['phase']['qsrFundsNeeded'],
+        creationTimestamp: json['phase']['creationTimestamp'],
+        acceptedTimestamp: json['phase']['acceptedTimestamp'],
+        status: json['phase']['status'],
         voteBreakdown: VoteBreakdown.fromJson(json['votes']),
       );
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['id'] = id.toString();
+    data['projectId'] = projectId.toString();
     data['name'] = name;
     data['description'] = description;
     data['url'] = url;
-    data['fundsNeeded'] = fundsNeeded;
+    data['znnFundsNeeded'] = znnFundsNeeded;
+    data['qsrFundsNeeded'] = qsrFundsNeeded;
     data['creationTimestamp'] = creationTimestamp;
+    data['acceptedTimestamp'] = acceptedTimestamp;
     data['status'] = statusInt;
     data['votes'] = voteBreakdown.toString();
     return data;
   }
 }
 
-class Project extends BaseProject {
+class Project extends AcceleratorProject {
   Address owner;
   List<Hash> phaseIds;
   List<Phase> phases;
-  late double _fundsReceived;
-  late double _fundsToCollect;
+  int lastUpdateTimestamp;
 
   Project({
     required Hash id,
@@ -61,30 +75,26 @@ class Project extends BaseProject {
     required this.owner,
     required String description,
     required String url,
-    required int fundsNeeded,
+    required int znnFundsNeeded,
+    required int qsrFundsNeeded,
     required int creationTimestamp,
+    required int lastUpdateTimestamp,
     required int status,
     required this.phaseIds,
     required VoteBreakdown voteBreakdown,
     required this.phases,
-  }) : super(
+  })  : this.lastUpdateTimestamp = lastUpdateTimestamp,
+        super(
           id: id,
           name: name,
           description: description,
           url: url,
-          fundsNeeded: fundsNeeded,
+          znnFundsNeeded: znnFundsNeeded,
+          qsrFundsNeeded: qsrFundsNeeded,
           creationTimestamp: creationTimestamp,
           statusInt: status,
           voteBreakdown: voteBreakdown,
-        ) {
-    _fundsReceived = phases
-        .where((element) => element.status == BaseProjectStatus.paid)
-        .fold<double>(
-            0.0,
-            (previousValue, phase) =>
-                previousValue + phase.fundsNeededWithDecimals);
-    _fundsToCollect = fundsNeededWithDecimals - _fundsReceived;
-  }
+        ) {}
 
   factory Project.fromJson(Map<String, dynamic> json) => Project(
         id: Hash.parse(json['id']),
@@ -92,8 +102,10 @@ class Project extends BaseProject {
         name: json['name'],
         description: json['description'],
         url: json['url'],
-        fundsNeeded: json['fundsNeeded'],
+        znnFundsNeeded: json['znnFundsNeeded'],
+        qsrFundsNeeded: json['qsrFundsNeeded'],
         creationTimestamp: json['creationTimestamp'],
+        lastUpdateTimestamp: json['lastUpdateTimestamp'],
         status: json['status'],
         voteBreakdown: VoteBreakdown.fromJson(json['votes']),
         phases: (json['phases'] as List).fold<List<Phase>>([],
@@ -101,7 +113,7 @@ class Project extends BaseProject {
           previousValue.add(Phase.fromJson(element));
           return previousValue;
         }),
-        phaseIds: (json['PhaseIds'] as List).fold<List<Hash>>([],
+        phaseIds: (json['phaseIds'] as List).fold<List<Hash>>([],
             (previousValue, element) {
           previousValue.add(Hash.parse(element));
           return previousValue;
@@ -115,42 +127,71 @@ class Project extends BaseProject {
     data['name'] = name;
     data['description'] = description;
     data['url'] = url;
-    data['fundsNeeded'] = fundsNeeded;
+    data['znnFundsNeeded'] = znnFundsNeeded;
+    data['qsrFundsNeeded'] = qsrFundsNeeded;
     data['creationTimestamp'] = creationTimestamp;
+    data['lastUpdateTimestamp'] = lastUpdateTimestamp;
     data['status'] = statusInt;
     data['phaseIds'] = phaseIds.toString();
     return data;
   }
 
-  double get fundsReceived => _fundsReceived;
-
-  double get fundsToCollect => _fundsToCollect;
-
-  int? getUnrequestedFunds() {
+  int getPaidZnnFunds() {
     var amount = 0;
     phases.forEach((phase) {
-      amount += phase.fundsNeeded;
-    });
-    return fundsNeeded - amount;
-  }
-
-  int getPaidFunds() {
-    var amount = 0;
-    phases.forEach((phase) {
-      if (phase.status.index == BaseProjectStatus.paid.index) {
-        amount += phase.fundsNeeded;
+      if (phase.status == AcceleratorProjectStatus.paid) {
+        amount += phase.znnFundsNeeded;
       }
     });
     return amount;
   }
 
-  int getWaitingFunds() {
+  int getPendingZnnFunds() {
     if (phases.isEmpty) return 0;
-    var lastPhase = phases[phases.length - 1];
-    if (lastPhase.status.index == BaseProjectStatus.active.index) {
-      return lastPhase.fundsNeeded;
+    var lastPhase = getLastPhase();
+    if (lastPhase != null &&
+        lastPhase.status == AcceleratorProjectStatus.active) {
+      return lastPhase.znnFundsNeeded;
     }
     return 0;
+  }
+
+  int getRemainingZnnFunds() {
+    if (phases.isEmpty) return znnFundsNeeded;
+    return znnFundsNeeded - getPaidZnnFunds();
+  }
+
+  int getTotalZnnFunds() {
+    return znnFundsNeeded;
+  }
+
+  int getPaidQsrFunds() {
+    var amount = 0;
+    phases.forEach((phase) {
+      if (phase.status == AcceleratorProjectStatus.paid) {
+        amount += phase.qsrFundsNeeded;
+      }
+    });
+    return amount;
+  }
+
+  int getPendingQsrFunds() {
+    if (phases.isEmpty) return 0;
+    var lastPhase = getLastPhase();
+    if (lastPhase != null &&
+        lastPhase.status == AcceleratorProjectStatus.active) {
+      return lastPhase.qsrFundsNeeded;
+    }
+    return 0;
+  }
+
+  int getRemainingQsrFunds() {
+    if (phases.isEmpty) return qsrFundsNeeded;
+    return qsrFundsNeeded - getPaidQsrFunds();
+  }
+
+  int getTotalQsrFunds() {
+    return qsrFundsNeeded;
   }
 
   Phase? findPhaseById(Hash id) {
@@ -202,42 +243,48 @@ class ProjectList {
   }
 }
 
-abstract class BaseProject {
+abstract class AcceleratorProject {
   Hash id;
   String name;
   String description;
   String url;
-  int fundsNeeded;
+  int znnFundsNeeded;
+  int qsrFundsNeeded;
   int creationTimestamp;
   int statusInt;
   VoteBreakdown voteBreakdown;
 
-  BaseProject({
+  AcceleratorProject({
     required this.id,
     required this.name,
     required this.description,
     required this.url,
-    required this.fundsNeeded,
+    required this.znnFundsNeeded,
+    required this.qsrFundsNeeded,
     required this.creationTimestamp,
     required this.statusInt,
     required this.voteBreakdown,
   });
 
-  BaseProjectStatus get status {
-    if (statusInt >= BaseProjectStatus.voting.index &&
-        statusInt <= BaseProjectStatus.closed.index) {
-      return BaseProjectStatus.values[statusInt];
-    }
-    return BaseProjectStatus.wrongStatus;
-  }
+  AcceleratorProjectStatus get status =>
+      AcceleratorProjectStatus.values[statusInt];
 
-  num get fundsNeededWithDecimals =>
-      AmountUtils.addDecimals(fundsNeeded, znnDecimals);
+  num get znnFundsNeededWithDecimals =>
+      AmountUtils.addDecimals(znnFundsNeeded, znnDecimals);
+
+  num get qsrFundsNeededWithDecimals =>
+      AmountUtils.addDecimals(qsrFundsNeeded, qsrDecimals);
 }
 
-enum BaseProjectStatus { voting, active, paid, closed, wrongStatus }
+enum AcceleratorProjectStatus {
+  voting,
+  active,
+  paid,
+  closed,
+  completed,
+}
 
-enum BaseProjectVote {
+enum AcceleratorProjectVote {
   yes,
   no,
   abstain,

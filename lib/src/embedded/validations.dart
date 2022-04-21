@@ -58,7 +58,10 @@ class Validations {
         return 'Pillar name can\'t be empty';
       }
       if (!pillarNameRegExp.hasMatch(value)) {
-        return 'Pillar name must match pattern: ${pillarNameRegExp.pattern}';
+        return 'Pillar name must match pattern : ${pillarNameRegExp.pattern}';
+      }
+      if (value.length > pillarNameMaxLength) {
+        return 'Pillar name must have maximum $pillarNameMaxLength characters';
       }
       return null;
     } else {
@@ -66,13 +69,13 @@ class Validations {
     }
   }
 
-  static String? proposalUrl(String? value) {
+  static String? projectName(String? value) {
     if (value != null) {
       if (value.isEmpty) {
-        return 'Proposal URL can\'t be empty';
+        return 'Project name can\'t be empty';
       }
-      if (!proposalUrlRegExp.hasMatch(value)) {
-        return 'Proposal URL does not match pattern: ${proposalUrlRegExp.pattern}';
+      if (value.length > projectNameMaxLength) {
+        return 'Project name must have maximum $projectNameMaxLength characters';
       }
       return null;
     } else {
@@ -80,27 +83,13 @@ class Validations {
     }
   }
 
-  static String? proposalName(String? value) {
+  static String? projectDescription(String? value) {
     if (value != null) {
       if (value.isEmpty) {
-        return 'Proposal name can\'t be empty';
+        return 'Project description can\'t be empty';
       }
-      if (value.length > proposalNameMaxLength) {
-        return 'Proposal name must have maximum $proposalNameMaxLength characters';
-      }
-      return null;
-    } else {
-      return 'Value is null';
-    }
-  }
-
-  static String? proposalDescription(String? value) {
-    if (value != null) {
-      if (value.isEmpty) {
-        return 'Proposal description can\'t be empty';
-      }
-      if (value.length > proposalDescriptionMaxLength) {
-        return 'Proposal description must have maximum $proposalDescriptionMaxLength characters';
+      if (value.length > projectDescriptionMaxLength) {
+        return 'Project description must have maximum $projectDescriptionMaxLength characters';
       }
       return null;
     } else {

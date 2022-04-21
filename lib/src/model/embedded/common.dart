@@ -76,21 +76,3 @@ class PillarVote {
   Map<String, dynamic> toJson() =>
       {'id': id.toString(), 'name': name, 'vote': vote};
 }
-
-class PillarVoteList {
-  VoteBreakdown voteBreakdown;
-  int count;
-  List<PillarVote> list;
-
-  PillarVoteList.fromJson(Map<String, dynamic> json)
-      : voteBreakdown = VoteBreakdown.fromJson(json['breakdown']),
-        count = json['count'],
-        list =
-            (json['list'] as List).map((j) => PillarVote.fromJson(j)).toList();
-
-  Map<String, dynamic> toJson() => {
-        'breakdown': voteBreakdown.toString(),
-        'count': count,
-        'list': list.map((v) => v.toJson()).toList(),
-      };
-}

@@ -1,6 +1,7 @@
-import 'package:znn_sdk_dart/src/model/nom/account_header.dart';
 import 'package:znn_sdk_dart/src/model/primitives.dart';
 import 'package:znn_sdk_dart/src/utils/bytes.dart';
+
+import 'account_header.dart';
 
 class Momentum {
   int version;

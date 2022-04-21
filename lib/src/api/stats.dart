@@ -24,4 +24,9 @@ class StatsApi {
     var response = await client.sendRequest('stats.networkInfo', []);
     return NetworkInfo.fromJson(response);
   }
+
+  Future<SyncInfo> syncInfo() async {
+    var response = await client.sendRequest('stats.syncInfo', []);
+    return SyncInfo.fromJson(response);
+  }
 }

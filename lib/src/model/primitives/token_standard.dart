@@ -1,5 +1,5 @@
-
-import 'package:znn_sdk_dart/src/model/primitives/bech32.dart';
+import 'package:bech32/bech32.dart';
+import 'package:znn_sdk_dart/src/model/primitives.dart';
 
 const String znnTokenStandard = 'zts1znnxxxxxxxxxxxxx9z4ulx';
 const String qsrTokenStandard = 'zts1qsrxxxxxxxxxxxxxmrhjll';
@@ -32,7 +32,7 @@ class TokenStandard {
   factory TokenStandard.bySymbol(String symbol) {
     if (symbol.compareTo('znn') == 0 || symbol.compareTo('ZNN') == 0) {
       return znnZts;
-    } else if (symbol.compareTo('qsr') == 0 || symbol.compareTo('QSR') == 0)  {
+    } else if (symbol.compareTo('qsr') == 0 || symbol.compareTo('QSR') == 0) {
       return qsrZts;
     } else {
       throw ArgumentError('TokenStandard.bySymbol supports only znn/qsr');
@@ -45,10 +45,10 @@ class TokenStandard {
 
   void validate() {
     if (hrp != prefix) {
-      throw ('Invalid ZTS prefix. Expected "$prefix" but got "$hrp"');
+      throw ('invalid ZTS prefix. Expected "$prefix" but got "$hrp"');
     }
     if (core.length != coreSize) {
-      throw ('Invalid ZTS size. Expected $coreSize but got ${core.length}');
+      throw ('invalid ZTS size. Expected $coreSize but got ${core.length}');
     }
   }
 
@@ -61,7 +61,9 @@ class TokenStandard {
 
   @override
   bool operator ==(Object other) =>
-      other is TokenStandard && other.runtimeType == runtimeType && other.toString() == toString();
+      other is TokenStandard &&
+      other.runtimeType == runtimeType &&
+      other.toString() == toString();
 
   @override
   int get hashCode => toString().hashCode;
