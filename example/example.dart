@@ -11,9 +11,13 @@ Future<void> main() async {
   var publicKey = await keyPair.getPublicKey();
   var address = await keyPair.address;
 
+  print('Cryptography examples');
   print('entropy: ${keyStore.entropy}');
   print('private key: ${HEX.encode(privateKey!)}');
   print('public key: ${HEX.encode(publicKey)}');
   print('address: $address');
-  print('core bytes: ${HEX.encode(address!.core!)}');
+  print('core bytes: ${HEX.encode(address!.core!)}\n');
+  print('Network examples');
+  print('chain identifier: ' + getChainIdentifier().toString());
+  print('network identifier: ' + getNetworkIdentifier().toString());
 }
