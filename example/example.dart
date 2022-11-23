@@ -18,6 +18,5 @@ Future<void> main() async {
   print('address: $address');
   print('core bytes: ${HEX.encode(address!.core!)}\n');
   print('Network examples');
-  print('chain identifier: ' + getChainIdentifier().toString());
-  print('network identifier: ' + getNetworkIdentifier().toString());
+  print('chain and network identifier: ' + getChainIdentifier().toString());
 }

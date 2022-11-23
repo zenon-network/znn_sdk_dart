@@ -58,9 +58,10 @@ void ensureDirectoriesExist() {
   return;
 }
 
+// Alphanet chain identifier as defined in the Genesis configuration file
+// Alphanet network identifier is initialized with the chain identifier
 // https://github.com/zenon-network/go-zenon/blob/b2e6a98fa154d763571bb7af6b1c685d0d82497d/zenon/zenon.go#L41
-int netId = 1; // Alphanet network identifier
-int chainId = 1; // Alphanet chain identifier
+int chainId = 1;
 
 void setChainIdentifier({int chainIdentifier = 1}) {
   chainId = chainIdentifier;
@@ -68,10 +69,6 @@ void setChainIdentifier({int chainIdentifier = 1}) {
 
 int getChainIdentifier() {
   return chainId;
-}
-
-int getNetworkIdentifier() {
-  return netId;
 }
 
 final logger = Logger('ZNN-SDK');
