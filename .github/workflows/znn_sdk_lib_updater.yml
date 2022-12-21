@@ -1,0 +1,66 @@
+name: Library updater for znn_sdk_dart
+
+on:
+  push:
+    branches:
+      - cicd
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  
+jobs:
+  lib-builder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare environment
+        run: |
+          sudo apt update
+          sudo apt upgrade -y
+          sudo apt install -y unzip
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Download libpow_links
+        uses: robinraju/release-downloader@v1.6
+        with:
+          repository: "alienc0der/znn-pow-links-cpp"
+          latest: true
+      - name: Download libargon2
+        uses: robinraju/release-downloader@v1.6
+        with:
+          repository: "alienc0der/argon2_ffi"
+          latest: true
+      - name: Copy libpow_links to blobs directory
+        run: |
+          unzip -j libpow_links-linux-amd64.zip -d ./
+          unzip -j libpow_links-darwin-universal.zip -d ./
+          unzip -j libpow_links-windows-amd64.zip -d ./
+          cp libpow_links.so lib/src/pow/blobs/libpow_links.so
+          cp libpow_links.dll lib/src/pow/blobs/libpow_links.dll
+          cp libpow_links.dylib lib/src/pow/blobs/libpow_links.dylib
+      - name: Copy libargon2_ffi to blobs directory
+        run: |
+          unzip -j libargon2_ffi-linux-amd64.zip -d ./
+          unzip -j libargon2_ffi-darwin-universal.zip -d ./
+          unzip -j libargon2_ffi-windows-amd64.zip -d ./
+          cp libargon2_ffi_plugin.so lib/src/argon2/blobs/libargon2_ffi_plugin.so
+          cp argon2_ffi_plugin.dll lib/src/argon2/blobs/argon2_ffi_plugin.dll
+          cp libargon2_ffi.dylib lib/src/argon2/blobs/libargon2_ffi.dylib
+      - name: Check if there are changes
+        run: |
+          function check() {
+            if [[ -z "$(git status --porcelain)" ]];
+            then
+              echo "0"
+            else
+              echo "1"
+            fi
+          }
+          echo "CHANGED=$(check)" >> $GITHUB_ENV
+      - name: Push if changes are present
+        if: ${{ env.CHANGED == '1' }}
+        run: |
+          git config user.name  "Github Actions"
+          git config user.email "GH-actions-ci@github.com"
+          git add -f lib/src/pow/blobs/*
+          git add -f lib/src/argon2/blobs/*
+          git commit -m "Updated native libraries"
+          git push origin ${GITHUB_REF##*/}
