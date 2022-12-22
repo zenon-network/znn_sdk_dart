@@ -57,6 +57,9 @@ void initializePoWLinks() {
     if (Platform.isWindows) {
       libraryPath = path.join(currentPath, 'libpow_links.dll');
     }
+    if (Platform.isAndroid) {
+      libraryPath = path.join(currentPath, 'libpow_links-arm64-v8a.so');
+    }
 
     var libFile = File(libraryPath);
 
@@ -73,7 +76,9 @@ void initializePoWLinks() {
   }
 
   // Open the dynamic library
-  final dylib = DynamicLibrary.open(libraryPath);
+  final dylib = Platform.isIOS
+      ? DynamicLibrary.process()
+      : DynamicLibrary.open(libraryPath);
 
   // Look up the CPP function 'generatePoW'
   final generatePoWPointer =
