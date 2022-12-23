@@ -58,6 +58,22 @@ void ensureDirectoriesExist() {
   return;
 }
 
+String getPubCachePath() {
+  Map env = Platform.environment;
+
+  if (env.containsKey('PUB_CACHE')) {
+    return Directory(env['PUB_CACHE']).path;
+  } else if (Platform.isWindows) {
+    var pubCacheDirectory =
+        Directory(path.join(env['APPDATA'], 'Pub', 'Cache'));
+    if (pubCacheDirectory.existsSync()) {
+      return pubCacheDirectory.path;
+    }
+    return Directory(path.join(env['LOCALAPPDATA'], 'Pub', 'Cache')).path;
+  }
+  return Directory('${env['HOME']}/.pub-cache').path;
+}
+
 int netId = 1; // Alphanet
 
 final logger = Logger('ZNN-SDK');
