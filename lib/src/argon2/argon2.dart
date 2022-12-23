@@ -44,7 +44,6 @@ Argon2FfiFlutter initArgon2() {
     var found = false;
 
     for (var currentPath in possiblePaths) {
-      print('cuurentPath = ' + currentPath);
       libraryPath = path.join(currentPath, libraryName);
 
       var libFile = File(libraryPath);
