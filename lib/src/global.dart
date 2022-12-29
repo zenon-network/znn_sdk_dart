@@ -75,6 +75,18 @@ String getPubCachePath() {
 }
 
 int netId = 1; // Alphanet
+// Alphanet chain identifier as defined in the Genesis configuration file
+// Alphanet network identifier is initialized with the chain identifier
+// https://github.com/zenon-network/go-zenon/blob/b2e6a98fa154d763571bb7af6b1c685d0d82497d/zenon/zenon.go#L41
+int chainId = 1;
+
+void setChainIdentifier({int chainIdentifier = 1}) {
+  chainId = chainIdentifier;
+}
+
+int getChainIdentifier() {
+  return chainId;
+}
 
 final logger = Logger('ZNN-SDK');
 

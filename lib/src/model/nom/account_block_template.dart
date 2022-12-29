@@ -58,7 +58,7 @@ class AccountBlockTemplate {
       fromBlockHash,
       data})
       : version = 1,
-        chainIdentifier = netId,
+        chainIdentifier = chainId,
         hash = emptyHash,
         previousHash = emptyHash,
         height = 0,
@@ -82,13 +82,17 @@ class AccountBlockTemplate {
           fromBlockHash: fromBlockHash);
 
   factory AccountBlockTemplate.send(
-          Address toAddress, TokenStandard tokenStandard, int amount, [List<int>? data,]) =>
+    Address toAddress,
+    TokenStandard tokenStandard,
+    int amount, [
+    List<int>? data,
+  ]) =>
       AccountBlockTemplate(
-          blockType: BlockTypeEnum.userSend.index,
-          toAddress: toAddress,
-          tokenStandard: tokenStandard,
-          amount: amount,
-          data: data,
+        blockType: BlockTypeEnum.userSend.index,
+        toAddress: toAddress,
+        tokenStandard: tokenStandard,
+        amount: amount,
+        data: data,
       );
 
   factory AccountBlockTemplate.callContract(Address toAddress,
