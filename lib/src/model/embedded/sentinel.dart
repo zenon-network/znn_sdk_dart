@@ -15,7 +15,7 @@ class SentinelInfo {
         active = json['active'];
 
   Map<String, dynamic> toJson() => {
-        'owner': stakeAddress.toString(),
+        'owner': owner.toString(),
         'registrationTimestamp': registrationTimestamp,
         'isRevocable': isRevocable,
         'revokeCooldown': revokeCooldown,
