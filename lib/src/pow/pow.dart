@@ -43,19 +43,20 @@ void initializePoWLinks() {
       .add(path.join(path.joinAll(executablePathListParts), 'Resources'));
   possiblePaths.add(path.join(path.joinAll(currentPathListParts), insideSdk));
 
-  Directory(getPubCachePath())
-      .listSync(recursive: true, followLinks: false)
-      .forEach((f) {
-    if (f.toString().contains('libpow_links') &&
-        f.statSync().type == FileSystemEntityType.file &&
-        (path.extension(f.absolute.path).contains('.so') ||
-            path.extension(f.absolute.path).contains('.dylib') ||
-            path.extension(f.absolute.path).contains('.dll'))) {
-      var libPath = path.split(f.absolute.path);
-      libPath.removeLast();
-      possiblePaths.add(path.joinAll(libPath));
-    }
-  });
+  Directory pubCacheDir = Directory(getPubCachePath());
+  if (pubCacheDir.existsSync()) {
+    pubCacheDir.listSync(recursive: true, followLinks: false).forEach((f) {
+      if (f.toString().contains('libpow_links') &&
+          f.statSync().type == FileSystemEntityType.file &&
+          (path.extension(f.absolute.path).contains('.so') ||
+              path.extension(f.absolute.path).contains('.dylib') ||
+              path.extension(f.absolute.path).contains('.dll'))) {
+        var libPath = path.split(f.absolute.path);
+        libPath.removeLast();
+        possiblePaths.add(path.joinAll(libPath));
+      }
+    });
+  }
 
   var libraryPath = '';
   var found = false;
