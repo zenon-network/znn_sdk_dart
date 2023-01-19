@@ -16,10 +16,10 @@ dependencies:
   bech32: ^0.2.1
   sha3: ^0.2.0
   json_rpc_2: ^3.0.2
-  path: ^1.8.3
-  collection: ^1.17.0
+  path: ^1.8.2
+  collection: ^1.16.0
   logging: ^1.1.0
-  stream_channel: ^2.1.1
+  stream_channel: ^2.1.0
   ffi: ^2.0.1
 
 dev_dependencies:
