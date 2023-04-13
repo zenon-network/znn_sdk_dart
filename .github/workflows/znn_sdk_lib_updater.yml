@@ -3,7 +3,7 @@ name: Library updater for znn_sdk_dart
 on:
   push:
     branches:
-      - cicd
+      - master
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
   
@@ -21,12 +21,12 @@ jobs:
       - name: Download libpow_links
         uses: robinraju/release-downloader@v1.6
         with:
-          repository: "alienc0der/znn-pow-links-cpp"
+          repository: "zenon-network/znn-pow-links-cpp"
           latest: true
       - name: Download libargon2
         uses: robinraju/release-downloader@v1.6
         with:
-          repository: "alienc0der/argon2_ffi"
+          repository: "zenon-network/argon2_ffi"
           latest: true
       - name: Move libpow_links native library to blobs directory
         run: |
