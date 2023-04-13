@@ -1,4 +1,6 @@
-# Zenon Dart SDK
+# Zenon Dart SDK 
+
+[![Tests for znn_sdk_dart](https://github.com/alienc0der/znn_sdk_dart/actions/workflows/znn_sdk_tests.yml/badge.svg?branch=cicd)](https://github.com/alienc0der/znn_sdk_dart/actions/workflows/znn_sdk_tests.yml)
 
 Reference implementation for the Zenon SDK for Dart and Flutter apps compatible with the Zenon Alphanet - Network of Momentum Phase 0. It provides a simple integration with any Dart or Flutter based projects.
 

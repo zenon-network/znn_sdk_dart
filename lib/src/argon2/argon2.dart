@@ -25,8 +25,21 @@ Argon2FfiFlutter initArgon2() {
     possiblePaths
         .add(path.join(path.joinAll(executablePathListParts), 'Resources'));
     possiblePaths.add(path.join(path.joinAll(currentPathListParts), insideSdk));
-    possiblePaths.add(
-        path.join(path.joinAll(currentPathListParts), 'packages', insideSdk));
+
+    Directory pubCacheDir = Directory(getPubCachePath());
+    if (pubCacheDir.existsSync()) {
+      pubCacheDir.listSync(recursive: true, followLinks: false).forEach((f) {
+        if (f.toString().contains('argon2_ffi') &&
+            f.statSync().type == FileSystemEntityType.file &&
+            (path.extension(f.absolute.path).contains('.so') ||
+                path.extension(f.absolute.path).contains('.dylib') ||
+                path.extension(f.absolute.path).contains('.dll'))) {
+          var libPath = path.split(f.absolute.path);
+          libPath.removeLast();
+          possiblePaths.add(path.joinAll(libPath));
+        }
+      });
+    }
 
     var libraryPath = '';
     var found = false;

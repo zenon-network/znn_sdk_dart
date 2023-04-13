@@ -1,0 +1,23 @@
+name: Tests for znn_sdk_dart
+
+on:
+  push:
+    branches:
+      - cicd
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    steps:
+    - uses: actions/checkout@v3
+    - uses: dart-lang/setup-dart@v1.3
+    - name: Install dependencies
+      run: dart pub get
+    - name: Run tests
+      run: dart pub run test

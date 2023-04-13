@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert' as convert;
 import 'dart:ffi';
-import 'dart:io' show Directory, File, Platform;
+import 'dart:io';
 import 'dart:isolate';
 
 import 'package:ffi/ffi.dart';
@@ -42,8 +42,21 @@ void initializePoWLinks() {
   possiblePaths
       .add(path.join(path.joinAll(executablePathListParts), 'Resources'));
   possiblePaths.add(path.join(path.joinAll(currentPathListParts), insideSdk));
-  possiblePaths.add(
-      path.join(path.joinAll(currentPathListParts), 'packages', insideSdk));
+
+  Directory pubCacheDir = Directory(getPubCachePath());
+  if (pubCacheDir.existsSync()) {
+    pubCacheDir.listSync(recursive: true, followLinks: false).forEach((f) {
+      if (f.toString().contains('libpow_links') &&
+          f.statSync().type == FileSystemEntityType.file &&
+          (path.extension(f.absolute.path).contains('.so') ||
+              path.extension(f.absolute.path).contains('.dylib') ||
+              path.extension(f.absolute.path).contains('.dll'))) {
+        var libPath = path.split(f.absolute.path);
+        libPath.removeLast();
+        possiblePaths.add(path.joinAll(libPath));
+      }
+    });
+  }
 
   var libraryPath = '';
   var found = false;
@@ -56,6 +69,9 @@ void initializePoWLinks() {
     }
     if (Platform.isWindows) {
       libraryPath = path.join(currentPath, 'libpow_links.dll');
+    }
+    if (Platform.isAndroid) {
+      libraryPath = path.join(currentPath, 'libpow_links-arm64-v8a.so');
     }
 
     var libFile = File(libraryPath);
@@ -73,7 +89,9 @@ void initializePoWLinks() {
   }
 
   // Open the dynamic library
-  final dylib = DynamicLibrary.open(libraryPath);
+  final dylib = Platform.isIOS
+      ? DynamicLibrary.process()
+      : DynamicLibrary.open(libraryPath);
 
   // Look up the CPP function 'generatePoW'
   final generatePoWPointer =
