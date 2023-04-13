@@ -3,7 +3,7 @@ name: Tests for znn_sdk_dart
 on:
   push:
     branches:
-      - cicd
+      - master
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
