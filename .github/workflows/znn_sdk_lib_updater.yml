@@ -60,6 +60,8 @@ jobs:
         run: |
           git config user.name  "Github Actions"
           git config user.email "GH-actions-ci@github.com"
+          git fetch
+          git pull
           git add -f lib/src/pow/blobs/*
           git add -f lib/src/argon2/blobs/*
           git commit -m "Updated native libraries"
