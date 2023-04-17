@@ -126,10 +126,10 @@ class AccountBlockTemplate {
                 : BytesUtils.base64ToBytes(json['data'])!),
         difficulty = json['difficulty'],
         nonce = json['nonce'],
-        publicKey = (json['publicKey'] != null
+        publicKey = (json['publicKey'] != null && json['publicKey'].isNotEmpty
             ? BytesUtils.base64ToBytes(json['publicKey'])
             : [])!,
-        signature = (json['signature'] != null
+        signature = (json['signature'] != null && json['signature'].isNotEmpty
             ? BytesUtils.base64ToBytes(json['signature'])
             : [])!;
 
