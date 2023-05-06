@@ -57,23 +57,23 @@ class SentinelApi {
   }
 
   AccountBlockTemplate revoke() {
-    return AccountBlockTemplate.callContract(sentinelAddress, znnZts, 0,
-        Definitions.sentinel.encodeFunction('Revoke', []));
+    return AccountBlockTemplate.callContract(sentinelAddress, znnZts,
+        BigInt.zero, Definitions.sentinel.encodeFunction('Revoke', []));
   }
 
   // Common contract methods
   AccountBlockTemplate collectReward() {
-    return AccountBlockTemplate.callContract(sentinelAddress, znnZts, 0,
-        Definitions.common.encodeFunction('CollectReward', []));
+    return AccountBlockTemplate.callContract(sentinelAddress, znnZts,
+        BigInt.zero, Definitions.common.encodeFunction('CollectReward', []));
   }
 
-  AccountBlockTemplate depositQsr(int amount) {
+  AccountBlockTemplate depositQsr(BigInt amount) {
     return AccountBlockTemplate.callContract(sentinelAddress, qsrZts, amount,
         Definitions.common.encodeFunction('DepositQsr', []));
   }
 
   AccountBlockTemplate withdrawQsr() {
-    return AccountBlockTemplate.callContract(sentinelAddress, znnZts, 0,
-        Definitions.common.encodeFunction('WithdrawQsr', []));
+    return AccountBlockTemplate.callContract(sentinelAddress, znnZts,
+        BigInt.zero, Definitions.common.encodeFunction('WithdrawQsr', []));
   }
 }

@@ -3,27 +3,27 @@ import 'package:znn_sdk_dart/src/utils/nom_constants.dart';
 const genesisTimestamp = 1637755200;
 
 // Plasma
-final int fuseMinQsrAmount = 10 * oneQsr;
-final int minPlasmaAmount = 21000;
+final BigInt fuseMinQsrAmount = BigInt.from(10 * oneQsr);
+final BigInt minPlasmaAmount = BigInt.from(21000);
 
 // Pillar
-final int pillarRegisterZnnAmount = 15000 * oneZnn;
-final int pillarRegisterQsrAmount = 150000 * oneQsr;
+final BigInt pillarRegisterZnnAmount = BigInt.from(15000 * oneZnn);
+final BigInt pillarRegisterQsrAmount = BigInt.from(150000 * oneQsr);
 final int pillarNameMaxLength = 40;
 final RegExp pillarNameRegExp = RegExp(r'^([a-zA-Z0-9]+[-._]?)*[a-zA-Z0-9]$');
 
 // Sentinel
-final int sentinelRegisterZnnAmount = 5000 * oneZnn;
-final int sentinelRegisterQsrAmount = 50000 * oneQsr;
+final BigInt sentinelRegisterZnnAmount = BigInt.from(5000 * oneZnn);
+final BigInt sentinelRegisterQsrAmount = BigInt.from(50000 * oneQsr);
 
 // Staking
-final int stakeMinZnnAmount = oneZnn;
+final BigInt stakeMinZnnAmount = BigInt.from(oneZnn);
 final int stakeTimeUnitSec = 30 * 24 * 60 * 60;
 final int stakeTimeMaxSec = 12 * stakeTimeUnitSec;
 final String stakeUnitDurationName = 'month';
 
 // Token
-final int tokenZtsIssueFeeInZnn = oneZnn;
+final BigInt tokenZtsIssueFeeInZnn = BigInt.from(oneZnn);
 final int tokenNameMaxLength = 40;
 final int tokenSymbolMaxLength = 10;
 final List<String> tokenSymbolExceptions = ['ZNN', 'QSR'];
@@ -35,7 +35,7 @@ final RegExp tokenDomainRegExp =
 // Accelerator
 final int projectDescriptionMaxLength = 240;
 final int projectNameMaxLength = 30;
-const int projectCreationFeeInZnn = 1;
+final BigInt projectCreationFeeInZnn = BigInt.from(oneZnn);
 const int projectVotingStatus = 0;
 const int projectActiveStatus = 1;
 const int projectPaidStatus = 2;

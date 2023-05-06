@@ -34,8 +34,7 @@ class BlockUtils {
     var momentumAcknowledgedBytes = transaction.momentumAcknowledged.getBytes();
     var addressBytes = transaction.address.getBytes();
     var toAddressBytes = transaction.toAddress.getBytes();
-    var amountBytes =
-        BytesUtils.bigIntToBytes(BigInt.from(transaction.amount), 32);
+    var amountBytes = BytesUtils.bigIntToBytes(transaction.amount, 32);
     var tokenStandardBytes = transaction.tokenStandard.getBytes();
     var fromBlockHashBytes = transaction.fromBlockHash.hash;
     var descendentBlocksBytes = Hash.digest([]).getBytes();
@@ -113,7 +112,8 @@ class BlockUtils {
         throw Error();
       }
 
-      var sendBlock = await z.ledger.getAccountBlockByHash(transaction.fromBlockHash);
+      var sendBlock =
+          await z.ledger.getAccountBlockByHash(transaction.fromBlockHash);
       if (sendBlock == null) {
         throw Error();
       }
@@ -145,9 +145,9 @@ class BlockUtils {
     var response =
         await z.embedded.plasma.getRequiredPoWForAccountBlock(powParam);
 
-    if (response.requiredDifficulty != 0) {
+    if (response.requiredDifficulty != BigInt.zero) {
       transaction.fusedPlasma = response.availablePlasma;
-      transaction.difficulty = response.requiredDifficulty;
+      transaction.difficulty = response.requiredDifficulty.toInt();
       logger.info(
           'Generating Plasma for block: hash=${BlockUtils._getPoWData(transaction)}');
       generatingPowCallback?.call(PowStatus.generating);
@@ -182,8 +182,8 @@ class BlockUtils {
         generatingPowCallback: generatingPowCallback,
         waitForRequiredPlasma: waitForRequiredPlasma);
     await _setHashAndSignature(transaction, currentKeyPair);
-
     await z.ledger.publishRawTransaction(transaction);
+
     logger.info('Published account-block');
     return transaction;
   }
@@ -201,7 +201,7 @@ class BlockUtils {
 
     var response =
         await z.embedded.plasma.getRequiredPoWForAccountBlock(powParam);
-    if (response.requiredDifficulty == 0) {
+    if (response.requiredDifficulty == BigInt.zero) {
       return false;
     }
     return true;

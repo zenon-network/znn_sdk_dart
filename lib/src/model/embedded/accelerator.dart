@@ -12,8 +12,8 @@ class Phase extends AcceleratorProject {
     required String name,
     required String description,
     required String url,
-    required int znnFundsNeeded,
-    required int qsrFundsNeeded,
+    required BigInt znnFundsNeeded,
+    required BigInt qsrFundsNeeded,
     required int creationTimestamp,
     required int acceptedTimestamp,
     required int status,
@@ -38,8 +38,8 @@ class Phase extends AcceleratorProject {
         name: json['phase']['name'],
         description: json['phase']['description'],
         url: json['phase']['url'],
-        znnFundsNeeded: json['phase']['znnFundsNeeded'],
-        qsrFundsNeeded: json['phase']['qsrFundsNeeded'],
+        znnFundsNeeded: BigInt.parse(json['phase']['znnFundsNeeded']),
+        qsrFundsNeeded: BigInt.parse(json['phase']['qsrFundsNeeded']),
         creationTimestamp: json['phase']['creationTimestamp'],
         acceptedTimestamp: json['phase']['acceptedTimestamp'],
         status: json['phase']['status'],
@@ -53,8 +53,8 @@ class Phase extends AcceleratorProject {
     data['name'] = name;
     data['description'] = description;
     data['url'] = url;
-    data['znnFundsNeeded'] = znnFundsNeeded;
-    data['qsrFundsNeeded'] = qsrFundsNeeded;
+    data['znnFundsNeeded'] = znnFundsNeeded.toString();
+    data['qsrFundsNeeded'] = qsrFundsNeeded.toString();
     data['creationTimestamp'] = creationTimestamp;
     data['acceptedTimestamp'] = acceptedTimestamp;
     data['status'] = statusInt;
@@ -75,8 +75,8 @@ class Project extends AcceleratorProject {
     required this.owner,
     required String description,
     required String url,
-    required int znnFundsNeeded,
-    required int qsrFundsNeeded,
+    required BigInt znnFundsNeeded,
+    required BigInt qsrFundsNeeded,
     required int creationTimestamp,
     required int lastUpdateTimestamp,
     required int status,
@@ -102,8 +102,8 @@ class Project extends AcceleratorProject {
         name: json['name'],
         description: json['description'],
         url: json['url'],
-        znnFundsNeeded: json['znnFundsNeeded'],
-        qsrFundsNeeded: json['qsrFundsNeeded'],
+        znnFundsNeeded: BigInt.parse(json['znnFundsNeeded']),
+        qsrFundsNeeded: BigInt.parse(json['qsrFundsNeeded']),
         creationTimestamp: json['creationTimestamp'],
         lastUpdateTimestamp: json['lastUpdateTimestamp'],
         status: json['status'],
@@ -127,8 +127,8 @@ class Project extends AcceleratorProject {
     data['name'] = name;
     data['description'] = description;
     data['url'] = url;
-    data['znnFundsNeeded'] = znnFundsNeeded;
-    data['qsrFundsNeeded'] = qsrFundsNeeded;
+    data['znnFundsNeeded'] = znnFundsNeeded.toString();
+    data['qsrFundsNeeded'] = qsrFundsNeeded.toString();
     data['creationTimestamp'] = creationTimestamp;
     data['lastUpdateTimestamp'] = lastUpdateTimestamp;
     data['status'] = statusInt;
@@ -136,8 +136,8 @@ class Project extends AcceleratorProject {
     return data;
   }
 
-  int getPaidZnnFunds() {
-    var amount = 0;
+  BigInt getPaidZnnFunds() {
+    BigInt amount = BigInt.zero;
     phases.forEach((phase) {
       if (phase.status == AcceleratorProjectStatus.paid) {
         amount += phase.znnFundsNeeded;
@@ -146,27 +146,27 @@ class Project extends AcceleratorProject {
     return amount;
   }
 
-  int getPendingZnnFunds() {
-    if (phases.isEmpty) return 0;
+  BigInt getPendingZnnFunds() {
+    if (phases.isEmpty) return BigInt.zero;
     var lastPhase = getLastPhase();
     if (lastPhase != null &&
         lastPhase.status == AcceleratorProjectStatus.active) {
       return lastPhase.znnFundsNeeded;
     }
-    return 0;
+    return BigInt.zero;
   }
 
-  int getRemainingZnnFunds() {
+  BigInt getRemainingZnnFunds() {
     if (phases.isEmpty) return znnFundsNeeded;
     return znnFundsNeeded - getPaidZnnFunds();
   }
 
-  int getTotalZnnFunds() {
+  BigInt getTotalZnnFunds() {
     return znnFundsNeeded;
   }
 
-  int getPaidQsrFunds() {
-    var amount = 0;
+  BigInt getPaidQsrFunds() {
+    BigInt amount = BigInt.zero;
     phases.forEach((phase) {
       if (phase.status == AcceleratorProjectStatus.paid) {
         amount += phase.qsrFundsNeeded;
@@ -175,22 +175,22 @@ class Project extends AcceleratorProject {
     return amount;
   }
 
-  int getPendingQsrFunds() {
-    if (phases.isEmpty) return 0;
+  BigInt getPendingQsrFunds() {
+    if (phases.isEmpty) return BigInt.zero;
     var lastPhase = getLastPhase();
     if (lastPhase != null &&
         lastPhase.status == AcceleratorProjectStatus.active) {
       return lastPhase.qsrFundsNeeded;
     }
-    return 0;
+    return BigInt.zero;
   }
 
-  int getRemainingQsrFunds() {
+  BigInt getRemainingQsrFunds() {
     if (phases.isEmpty) return qsrFundsNeeded;
     return qsrFundsNeeded - getPaidQsrFunds();
   }
 
-  int getTotalQsrFunds() {
+  BigInt getTotalQsrFunds() {
     return qsrFundsNeeded;
   }
 
@@ -248,8 +248,8 @@ abstract class AcceleratorProject {
   String name;
   String description;
   String url;
-  int znnFundsNeeded;
-  int qsrFundsNeeded;
+  BigInt znnFundsNeeded;
+  BigInt qsrFundsNeeded;
   int creationTimestamp;
   int statusInt;
   VoteBreakdown voteBreakdown;

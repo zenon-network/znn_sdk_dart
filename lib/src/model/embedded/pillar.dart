@@ -18,7 +18,7 @@ class PillarInfo {
   int revokeCooldown;
   int revokeTimestamp;
   PillarEpochStats currentStats;
-  int weight;
+  BigInt weight;
   int producedMomentums;
   int expectedMomentums;
 
@@ -35,7 +35,7 @@ class PillarInfo {
         revokeCooldown = json['revokeCooldown'],
         revokeTimestamp = json['revokeTimestamp'],
         currentStats = PillarEpochStats.fromJson(json['currentStats']),
-        weight = json['weight'],
+        weight = BigInt.parse(json['weight']),
         producedMomentums = json['currentStats']['producedMomentums'],
         expectedMomentums = json['currentStats']['expectedMomentums'];
 
@@ -50,7 +50,7 @@ class PillarInfo {
     data['revokeCooldown'] = revokeCooldown;
     data['revokeTimestamp'] = revokeTimestamp;
     data['currentStats'] = currentStats.toJson();
-    data['weight'] = weight;
+    data['weight'] = weight.toString();
     return data;
   }
 }
@@ -89,7 +89,7 @@ class PillarEpochHistory {
   int giveDelegateRewardPercentage;
   int producedBlockNum;
   int expectedBlockNum;
-  int weight;
+  BigInt weight;
 
   PillarEpochHistory(
       this.name,
@@ -107,7 +107,7 @@ class PillarEpochHistory {
         giveDelegateRewardPercentage = json['giveDelegateRewardPercentage'],
         producedBlockNum = json['producedBlockNum'],
         expectedBlockNum = json['expectedBlockNum'],
-        weight = json['weight'];
+        weight = BigInt.parse(json['weight']);
 
   Map<String, dynamic> toJson() => {
         'name': name,
@@ -116,7 +116,7 @@ class PillarEpochHistory {
         'giveDelegateRewardPercentage': giveDelegateRewardPercentage,
         'producedBlockNum': producedBlockNum,
         'expectedBlockNum': expectedBlockNum,
-        'weight': weight
+        'weight': weight.toString()
       };
 }
 
@@ -137,18 +137,18 @@ class PillarEpochHistoryList {
 class DelegationInfo {
   String name;
   int status;
-  int weight;
+  BigInt weight;
   num? weightWithDecimals;
 
   DelegationInfo(
       {required this.name, required this.status, required this.weight}) {
-    weightWithDecimals = AmountUtils.addDecimals(weight, 8);
+    weightWithDecimals = AmountUtils.addDecimals(weight, znnDecimals);
   }
 
   factory DelegationInfo.fromJson(Map<String, dynamic> json) => DelegationInfo(
         name: json['name'],
         status: json['status'],
-        weight: json['weight'],
+        weight: BigInt.parse(json['weight']),
       );
 
   Map<String, dynamic> toJson() =>

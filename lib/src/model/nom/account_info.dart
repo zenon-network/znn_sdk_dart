@@ -22,14 +22,14 @@ class AccountInfo {
         : [];
   }
 
-  int? znn() => getBalance(znnZts);
+  BigInt? znn() => getBalance(znnZts);
 
-  int? qsr() => getBalance(qsrZts);
+  BigInt? qsr() => getBalance(qsrZts);
 
-  int getBalance(TokenStandard tokenStandard) {
+  BigInt getBalance(TokenStandard tokenStandard) {
     var info = balanceInfoList!.firstWhereOrNull(
         (element) => element.token!.tokenStandard == tokenStandard);
-    return info?.balance ?? 0;
+    return info?.balance ?? BigInt.zero;
   }
 
   num getBalanceWithDecimals(TokenStandard tokenStandard) {
@@ -53,7 +53,7 @@ class AccountInfo {
 
 class BalanceInfoListItem {
   Token? token;
-  int? balance;
+  BigInt? balance;
   num? balanceWithDecimals;
   String? balanceFormatted;
 
@@ -65,7 +65,7 @@ class BalanceInfoListItem {
   factory BalanceInfoListItem.fromJson(Map<String, dynamic> json) =>
       BalanceInfoListItem(
         token: json['token'] != null ? Token.fromJson(json['token']) : null,
-        balance: json['balance'].toInt(),
+        balance: BigInt.parse(json['balance']),
       );
 
   Map<String, dynamic> toJson() {
@@ -73,7 +73,7 @@ class BalanceInfoListItem {
     if (token != null) {
       data['token'] = token!.toJson();
     }
-    data['balance'] = balance;
+    data['balance'] = balance.toString();
     return data;
   }
 }
