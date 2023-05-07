@@ -28,9 +28,9 @@ class SentinelApi {
   }
 
   // Common RPC
-  Future<int> getDepositedQsr(Address address) async {
-    return await client
-        .sendRequest('embedded.sentinel.getDepositedQsr', [address.toString()]);
+  Future<BigInt> getDepositedQsr(Address address) async {
+    return BigInt.parse(await client.sendRequest(
+        'embedded.sentinel.getDepositedQsr', [address.toString()]));
   }
 
   Future<UncollectedReward> getUncollectedReward(Address address) async {

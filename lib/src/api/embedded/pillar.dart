@@ -14,9 +14,9 @@ class PillarApi {
   }
 
   // Common RPC
-  Future<int> getDepositedQsr(Address address) async {
-    return await client
-        .sendRequest('embedded.pillar.getDepositedQsr', [address.toString()]);
+  Future<BigInt> getDepositedQsr(Address address) async {
+    return BigInt.parse(await client
+        .sendRequest('embedded.pillar.getDepositedQsr', [address.toString()]));
   }
 
   Future<UncollectedReward> getUncollectedReward(Address address) async {
@@ -34,9 +34,9 @@ class PillarApi {
   }
 
   // RPC
-  Future<int> getQsrRegistrationCost() async {
-    return await client
-        .sendRequest('embedded.pillar.getQsrRegistrationCost', []);
+  Future<BigInt> getQsrRegistrationCost() async {
+    return BigInt.parse(
+        await client.sendRequest('embedded.pillar.getQsrRegistrationCost', []));
   }
 
   Future<PillarInfoList> getAll(
