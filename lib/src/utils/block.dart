@@ -145,7 +145,7 @@ class BlockUtils {
     var response =
         await z.embedded.plasma.getRequiredPoWForAccountBlock(powParam);
 
-    if (response.requiredDifficulty != BigInt.zero) {
+    if (response.requiredDifficulty != 0) {
       transaction.fusedPlasma = response.availablePlasma;
       transaction.difficulty = response.requiredDifficulty.toInt();
       logger.info(
@@ -201,7 +201,7 @@ class BlockUtils {
 
     var response =
         await z.embedded.plasma.getRequiredPoWForAccountBlock(powParam);
-    if (response.requiredDifficulty == BigInt.zero) {
+    if (response.requiredDifficulty == 0) {
       return false;
     }
     return true;

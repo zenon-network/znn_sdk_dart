@@ -103,10 +103,10 @@ class GetRequiredParam {
 class GetRequiredResponse {
   int availablePlasma;
   int basePlasma;
-  BigInt requiredDifficulty;
+  int requiredDifficulty;
 
   GetRequiredResponse.fromJson(Map<String, dynamic> json)
       : availablePlasma = json['availablePlasma'],
         basePlasma = json['basePlasma'],
-        requiredDifficulty = BigInt.parse(json['requiredDifficulty']);
+        requiredDifficulty = json['requiredDifficulty'];
 }
