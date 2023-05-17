@@ -1,6 +1,5 @@
 import 'package:znn_sdk_dart/src/model/embedded/common.dart';
 import 'package:znn_sdk_dart/src/model/primitives.dart';
-import 'package:znn_sdk_dart/src/utils/utils.dart';
 
 class Phase extends AcceleratorProject {
   Hash projectId;
@@ -268,12 +267,6 @@ abstract class AcceleratorProject {
 
   AcceleratorProjectStatus get status =>
       AcceleratorProjectStatus.values[statusInt];
-
-  num get znnFundsNeededWithDecimals =>
-      AmountUtils.addDecimals(znnFundsNeeded, znnDecimals);
-
-  num get qsrFundsNeededWithDecimals =>
-      AmountUtils.addDecimals(qsrFundsNeeded, qsrDecimals);
 }
 
 enum AcceleratorProjectStatus {

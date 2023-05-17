@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:znn_sdk_dart/src/model/nom.dart';
 import 'package:znn_sdk_dart/src/model/primitives.dart';
-import 'package:znn_sdk_dart/src/utils/utils.dart';
 
 class AccountInfo {
   String? address;
@@ -32,12 +31,6 @@ class AccountInfo {
     return info?.balance ?? BigInt.zero;
   }
 
-  num getBalanceWithDecimals(TokenStandard tokenStandard) {
-    var info = balanceInfoList!.firstWhereOrNull(
-        (element) => element.token!.tokenStandard == tokenStandard);
-    return info?.balanceWithDecimals! ?? 0;
-  }
-
   Token? findTokenByTokenStandard(TokenStandard tokenStandard) {
     try {
       return balanceInfoList!
@@ -54,13 +47,8 @@ class AccountInfo {
 class BalanceInfoListItem {
   Token? token;
   BigInt? balance;
-  num? balanceWithDecimals;
-  String? balanceFormatted;
 
-  BalanceInfoListItem({this.token, this.balance}) {
-    balanceWithDecimals = AmountUtils.addDecimals(balance!, token!.decimals);
-    balanceFormatted = '$balanceWithDecimals ${token!.symbol}';
-  }
+  BalanceInfoListItem({required this.token, required this.balance}) {}
 
   factory BalanceInfoListItem.fromJson(Map<String, dynamic> json) =>
       BalanceInfoListItem(

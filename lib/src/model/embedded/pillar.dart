@@ -1,5 +1,4 @@
 import 'package:znn_sdk_dart/src/model/primitives.dart';
-import 'package:znn_sdk_dart/src/utils/utils.dart';
 
 class PillarInfo {
   static const int unknownType = 0;
@@ -138,12 +137,9 @@ class DelegationInfo {
   String name;
   int status;
   BigInt weight;
-  num? weightWithDecimals;
 
   DelegationInfo(
-      {required this.name, required this.status, required this.weight}) {
-    weightWithDecimals = AmountUtils.addDecimals(weight, znnDecimals);
-  }
+      {required this.name, required this.status, required this.weight}) {}
 
   factory DelegationInfo.fromJson(Map<String, dynamic> json) => DelegationInfo(
         name: json['name'],
