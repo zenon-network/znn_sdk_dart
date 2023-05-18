@@ -27,6 +27,7 @@ final String stakeUnitDurationName = 'month';
 final BigInt tokenZtsIssueFeeInZnn = BigInt.from(1 * oneZnn);
 final BigInt kMinTokenTotalMaxSupply = BigInt.one;
 final BigInt kBigP255 = BigInt.from(2).pow(255);
+final BigInt kBigP255m1 = kBigP255 - BigInt.one;
 final int tokenNameMaxLength = 40;
 final int tokenSymbolMaxLength = 10;
 final List<String> tokenSymbolExceptions = ['ZNN', 'QSR'];
