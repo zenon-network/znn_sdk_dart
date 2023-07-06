@@ -7,7 +7,7 @@ import 'package:znn_sdk_dart/src/model/primitives/hash.dart';
 import 'package:znn_sdk_dart/src/model/primitives/hash_height.dart';
 import 'package:znn_sdk_dart/src/pow/pow.dart';
 import 'package:znn_sdk_dart/src/utils/utils.dart';
-import 'package:znn_sdk_dart/src/wallet/keypair.dart';
+import 'package:znn_sdk_dart/src/wallet/interfaces.dart';
 import 'package:znn_sdk_dart/src/zenon.dart';
 
 class BlockUtils {
@@ -67,8 +67,8 @@ class BlockUtils {
   }
 
   static Future<List<int>> _getTransactionSignature(
-      KeyPair keyPair, AccountBlockTemplate transaction) {
-    return keyPair.sign(transaction.hash.getBytes()!);
+      Wallet wallet, AccountBlockTemplate transaction) {
+    return wallet.sign(transaction.hash.getBytes()!);
   }
 
   static Hash _getPoWData(AccountBlockTemplate transaction) {
@@ -99,11 +99,11 @@ class BlockUtils {
   }
 
   static Future<bool> _checkAndSetFields(
-      AccountBlockTemplate transaction, KeyPair currentKeyPair) async {
+      AccountBlockTemplate transaction, Wallet wallet) async {
     var z = Zenon();
 
-    transaction.address = (await currentKeyPair.address)!;
-    transaction.publicKey = (await currentKeyPair.getPublicKey());
+    transaction.address = (await wallet.address)!;
+    transaction.publicKey = (await wallet.getPublicKey());
 
     await _autofillTransactionParameters(transaction);
 
@@ -163,25 +163,25 @@ class BlockUtils {
   }
 
   static Future<bool> _setHashAndSignature(
-      AccountBlockTemplate transaction, KeyPair currentKeyPair) async {
+      AccountBlockTemplate transaction, Wallet wallet) async {
     transaction.hash = BlockUtils.getTransactionHash(transaction);
     var transSig =
-        await BlockUtils._getTransactionSignature(currentKeyPair, transaction);
+        await BlockUtils._getTransactionSignature(wallet, transaction);
     transaction.signature = transSig;
     return true;
   }
 
   static Future<AccountBlockTemplate> send(
-      AccountBlockTemplate transaction, KeyPair currentKeyPair,
+      AccountBlockTemplate transaction, Wallet wallet,
       {void Function(PowStatus)? generatingPowCallback,
       waitForRequiredPlasma = false}) async {
     var z = Zenon();
 
-    await _checkAndSetFields(transaction, currentKeyPair);
+    await _checkAndSetFields(transaction, wallet);
     await _setDifficulty(transaction,
         generatingPowCallback: generatingPowCallback,
         waitForRequiredPlasma: waitForRequiredPlasma);
-    await _setHashAndSignature(transaction, currentKeyPair);
+    await _setHashAndSignature(transaction, wallet);
 
     await z.ledger.publishRawTransaction(transaction);
     logger.info('Published account-block');
@@ -189,10 +189,10 @@ class BlockUtils {
   }
 
   static Future<bool> requiresPoW(AccountBlockTemplate transaction,
-      {KeyPair? blockSigningKey}) async {
+      {Wallet? wallet}) async {
     var z = Zenon();
 
-    transaction.address = (await blockSigningKey!.address)!;
+    transaction.address = (await wallet!.address)!;
     var powParam = GetRequiredParam(
         address: transaction.address,
         blockType: transaction.blockType,

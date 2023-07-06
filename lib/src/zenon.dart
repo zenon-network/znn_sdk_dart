@@ -46,14 +46,14 @@ class Zenon {
   }
 
   Future<AccountBlockTemplate> send(AccountBlockTemplate transaction,
-      {KeyPair? currentKeyPair, void Function(PowStatus)? generatingPowCallback, waitForRequiredPlasma = false}) async {
-    currentKeyPair ??= defaultKeyPair;
-    if (currentKeyPair == null) throw noKeyPairSelectedException;
-    return BlockUtils.send(transaction, currentKeyPair, generatingPowCallback: generatingPowCallback, waitForRequiredPlasma: waitForRequiredPlasma);
+      {Wallet? currentWallet, void Function(PowStatus)? generatingPowCallback, waitForRequiredPlasma = false}) async {
+    currentWallet ??= defaultKeyPair;
+    if (currentWallet == null) throw noKeyPairSelectedException;
+    return BlockUtils.send(transaction, currentWallet, generatingPowCallback: generatingPowCallback, waitForRequiredPlasma: waitForRequiredPlasma);
   }
 
-  Future<bool> requiresPoW(AccountBlockTemplate transaction, {KeyPair? blockSigningKey}) async {
-    blockSigningKey ??= defaultKeyPair;
-    return BlockUtils.requiresPoW(transaction, blockSigningKey: blockSigningKey);
+  Future<bool> requiresPoW(AccountBlockTemplate transaction, {Wallet? currentWallet}) async {
+    currentWallet ??= defaultKeyPair;
+    return BlockUtils.requiresPoW(transaction, wallet: currentWallet);
   }
 }

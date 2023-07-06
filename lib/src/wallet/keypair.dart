@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:znn_sdk_dart/src/crypto/crypto.dart';
 import 'package:znn_sdk_dart/src/model/primitives.dart';
+import 'package:znn_sdk_dart/src/wallet/interfaces.dart';
 
-class KeyPair {
+class KeyPair implements Wallet {
   List<int>? privateKey;
   List<int>? publicKey;
   Address? _address;
@@ -13,12 +14,12 @@ class KeyPair {
     this.publicKey = publicKey;
     _address = address;
   }
-
+  
   List<int>? getPrivateKey() {
     return privateKey;
   }
 
-  Future<List<int>> getPublicKey() async {
+  Future<List<int>> getPublicKey([bool verify = false]) async {
     publicKey ??= await Crypto.getPublicKey(privateKey);
     return publicKey!;
   }
@@ -30,7 +31,7 @@ class KeyPair {
     }
     return _address;
   }
-
+  
   Future<List<int>> sign(List<int> message) async {
     return Crypto.sign(message, privateKey, (await getPublicKey()));
   }
