@@ -14,7 +14,7 @@ class KeyPair implements Wallet {
     this.publicKey = publicKey;
     _address = address;
   }
-  
+
   List<int>? getPrivateKey() {
     return privateKey;
   }
@@ -31,9 +31,10 @@ class KeyPair implements Wallet {
     }
     return _address;
   }
-  
+
   Future<List<int>> sign(List<int> message) async {
-    return Crypto.sign(message, privateKey, (await getPublicKey()));
+    var hash = Hash.digest(message);
+    return Crypto.sign(hash, privateKey, (await getPublicKey()));
   }
 
   Future<bool> verify(List<int> signature, List<int> message) async {

@@ -24,7 +24,7 @@ class BlockUtils {
     ].contains(blockType);
   }
 
-  static Hash getTransactionHash(AccountBlockTemplate transaction) {
+  static List<int> getTransactionBytes(AccountBlockTemplate transaction) {
     var versionBytes = BytesUtils.longToBytes(transaction.version);
     var chainIdentifierBytes =
         BytesUtils.longToBytes(transaction.chainIdentifier);
@@ -63,12 +63,7 @@ class BlockUtils {
       nonceBytes
     ]);
 
-    return Hash.digest(source);
-  }
-
-  static Future<List<int>> _getTransactionSignature(
-      Wallet wallet, AccountBlockTemplate transaction) {
-    return wallet.sign(transaction.hash.getBytes()!);
+    return source;
   }
 
   static Hash _getPoWData(AccountBlockTemplate transaction) {
@@ -113,7 +108,8 @@ class BlockUtils {
         throw Error();
       }
 
-      var sendBlock = await z.ledger.getAccountBlockByHash(transaction.fromBlockHash);
+      var sendBlock =
+          await z.ledger.getAccountBlockByHash(transaction.fromBlockHash);
       if (sendBlock == null) {
         throw Error();
       }
@@ -164,10 +160,9 @@ class BlockUtils {
 
   static Future<bool> _setHashAndSignature(
       AccountBlockTemplate transaction, Wallet wallet) async {
-    transaction.hash = BlockUtils.getTransactionHash(transaction);
-    var transSig =
-        await BlockUtils._getTransactionSignature(wallet, transaction);
-    transaction.signature = transSig;
+    var source = BlockUtils.getTransactionBytes(transaction);
+    transaction.hash = Hash.digest(source);
+    transaction.signature = await wallet.sign(source);
     return true;
   }
 
