@@ -33,8 +33,7 @@ class KeyPair implements Wallet {
   }
 
   Future<List<int>> sign(List<int> message) async {
-    var hash = Hash.digest(message);
-    return Crypto.sign(hash, privateKey, (await getPublicKey()));
+    return Crypto.sign(Crypto.digest(message), privateKey, (await getPublicKey()));
   }
 
   Future<bool> verify(List<int> signature, List<int> message) async {
