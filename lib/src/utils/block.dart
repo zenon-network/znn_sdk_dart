@@ -24,6 +24,10 @@ class BlockUtils {
     ].contains(blockType);
   }
 
+  static Hash getTransactionHash(AccountBlockTemplate transaction) {
+    return Hash.digest(getTransactionBytes(transaction));
+  }
+
   static List<int> getTransactionBytes(AccountBlockTemplate transaction) {
     var versionBytes = BytesUtils.longToBytes(transaction.version);
     var chainIdentifierBytes =
