@@ -14,7 +14,7 @@ var noKeyPairSelectedException = ZnnSdkException('No default keyPair selected');
 class Zenon {
   static final Zenon _singleton = Zenon._internal();
 
-  KeyPair? defaultKeyPair;
+  Wallet? defaultKeyPair;
   KeyStore? defaultKeyStore;
   File? defaultKeyStorePath;
 
