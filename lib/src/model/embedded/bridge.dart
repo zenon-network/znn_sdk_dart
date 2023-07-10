@@ -380,18 +380,3 @@ class TimeChallengesList {
         'list': list.map((v) => v.toJson()).toList(),
       };
 }
-
-/*
-/// === Bridge constants ===
-
-	InitialBridgeAdministrator   = types.ParseAddressPanic("z1qr9vtwsfr2n0nsxl2nfh6l5esqjh2wfj85cfq9")
-	MaximumFee                   = uint32(10000)
-	MinUnhaltDurationInMomentums = uint64(6 * MomentumsPerHour)  //main net
-	MinAdministratorDelay        = uint64(2 * MomentumsPerEpoch) // main net
-	MinSoftDelay                 = uint64(MomentumsPerEpoch)     // main net
-	MinGuardians                 = 5                             // main net
-
-	DecompressedECDSAPubKeyLength = 65
-	CompressedECDSAPubKeyLength   = 33
-	ECDSASignatureLength          = 65
- */
