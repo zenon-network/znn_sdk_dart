@@ -5,7 +5,7 @@ import 'package:path/path.dart' as path;
 
 export 'package:logging/logging.dart' show Level;
 
-const znnSdkVersion = '0.0.4';
+const znnSdkVersion = '0.0.5';
 const znnRootDirectory = 'znn';
 
 class ZnnPaths {
@@ -74,11 +74,7 @@ String getPubCachePath() {
   return Directory('${env['HOME']}/.pub-cache').path;
 }
 
-int netId = 1; // Alphanet
-// Alphanet chain identifier as defined in the Genesis configuration file
-// Alphanet network identifier is initialized with the chain identifier
-// https://github.com/zenon-network/go-zenon/blob/b2e6a98fa154d763571bb7af6b1c685d0d82497d/zenon/zenon.go#L41
-int chainId = 1;
+int chainId = 1; // Alphanet
 
 void setChainIdentifier({int chainIdentifier = 1}) {
   chainId = chainIdentifier;

@@ -325,7 +325,7 @@ class HashType extends AbiType {
   dynamic decode(List<int> encoded, [int offset = 0]) {
     var l = List.filled(AbiType.int32Size, 0, growable: true);
     BytesUtils.arraycopy(encoded, offset, l, 0, getFixedSize());
-    return Hash.digest(l);
+    return Hash.fromBytes(l);
   }
 }
 

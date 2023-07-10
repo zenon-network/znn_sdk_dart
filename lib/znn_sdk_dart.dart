@@ -1,5 +1,6 @@
 library znn_sdk_dart;
 
+export 'src/abi/abi.dart';
 export 'src/api/api.dart';
 export 'src/argon2/argon2.dart';
 export 'src/client/client.dart';

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:cryptography/cryptography.dart';
 import 'package:cryptography/dart.dart';
 import 'package:sha3/sha3.dart';
 import 'package:znn_sdk_dart/src/crypto/ed25519.dart' as ed25519;
@@ -41,5 +42,10 @@ class Crypto {
     var sha3 = SHA3(256, SHA3_PADDING, digestSize * 8);
     sha3.update(data);
     return sha3.digest();
+  }
+
+  static Future<List<int>> sha256Bytes(List<int> data) async {
+    var sha256 = await Sha256().hash(data);
+    return sha256.bytes;
   }
 }

@@ -18,8 +18,9 @@ final BigInt sentinelRegisterZnnAmount = BigInt.from(5000 * oneZnn);
 final BigInt sentinelRegisterQsrAmount = BigInt.from(50000 * oneQsr);
 
 // Staking
-final BigInt stakeMinZnnAmount = BigInt.from(1 * oneZnn);
+final BigInt stakeMinAmount = BigInt.from(1 * oneZnn);
 final int stakeTimeUnitSec = 30 * 24 * 60 * 60;
+final int stakeTimeMinSec = 1 * stakeTimeUnitSec;
 final int stakeTimeMaxSec = 12 * stakeTimeUnitSec;
 final String stakeUnitDurationName = 'month';
 
@@ -56,3 +57,19 @@ const int swapAssetDecayTimestampStart = 1645531200;
 const int swapAssetDecayEpochsOffset = 30 * 3;
 const int swapAssetDecayTickEpochs = 30;
 const int swapAssetDecayTickValuePercentage = 10;
+
+// Spork
+const int sporkNameMinLength = 5;
+const int sporkNameMaxLength = 40;
+const int sporkDescriptionMaxLength = 400;
+
+// Htlc
+const int htlcPreimageMinLength = 1;
+const int htlcPreimageMaxLength = 255;
+const int htlcPreimageDefaultLength = 32;
+const int htlcHashTypeSha3 = 0;
+const int htlcHashTypeSha256 = 1;
+
+// Bridge
+const int bridgeMinGuardians = 5;
+const int bridgeMaximumFee = 10000;
