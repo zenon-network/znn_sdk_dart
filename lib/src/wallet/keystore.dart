@@ -7,8 +7,9 @@ import 'package:znn_sdk_dart/src/crypto/crypto.dart';
 import 'package:znn_sdk_dart/src/model/primitives.dart';
 import 'package:znn_sdk_dart/src/wallet/derivation.dart';
 import 'package:znn_sdk_dart/src/wallet/keypair.dart';
+import 'package:znn_sdk_dart/src/wallet/interfaces.dart';
 
-class KeyStore {
+class KeyStore implements Wallet {
   String? mnemonic;
   late String entropy;
   String? seed;
@@ -46,6 +47,10 @@ class KeyStore {
 
   void setEntropy(String entropy) {
     setMnemonic(bip39.entropyToMnemonic(entropy));
+  }
+
+  Future<Signer> getSigner([int index = 0]) async {
+    return getKeyPair(index);
   }
 
   KeyPair getKeyPair([int index = 0]) {
