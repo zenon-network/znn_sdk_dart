@@ -164,8 +164,7 @@ class BlockUtils {
 
   static Future<bool> _setHashAndSignature(
       AccountBlockTemplate transaction, Signer signer) async {
-    var source = BlockUtils.getTransactionBytes(transaction);
-    transaction.hash = Hash.digest(source);
+    transaction.hash = getTransactionHash(transaction);
     transaction.signature = await signer.signTx(transaction);
     return true;
   }
