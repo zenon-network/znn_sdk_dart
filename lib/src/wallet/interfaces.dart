@@ -6,7 +6,7 @@ abstract class Wallet {
 }
 
 abstract class Signer {
-  Future<Address?> get address;
+  Future<Address> getAddress();
 
   Future<List<int>> getPublicKey();
 

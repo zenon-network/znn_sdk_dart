@@ -26,11 +26,15 @@ class KeyPair implements Signer {
   }
 
   Future<Address?> get address async {
+    return await getAddress();
+  }
+
+  Future<Address> getAddress() async {
     if (_address == null) {
       publicKey = await getPublicKey();
       _address = Address.fromPublicKey(publicKey!);
     }
-    return _address;
+    return _address!;
   }
 
   Future<List<int>> sign(List<int> message) async {

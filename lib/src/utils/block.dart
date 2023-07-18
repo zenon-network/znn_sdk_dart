@@ -101,8 +101,8 @@ class BlockUtils {
       AccountBlockTemplate transaction, Signer wallet) async {
     var z = Zenon();
 
-    transaction.address = (await wallet.address)!;
-    transaction.publicKey = (await wallet.getPublicKey());
+    transaction.address = await wallet.getAddress();
+    transaction.publicKey = await wallet.getPublicKey();
 
     await _autofillTransactionParameters(transaction);
 
@@ -190,7 +190,7 @@ class BlockUtils {
       {Signer? signer}) async {
     var z = Zenon();
 
-    transaction.address = (await signer!.address)!;
+    transaction.address = await signer!.getAddress();
     var powParam = GetRequiredParam(
         address: transaction.address,
         blockType: transaction.blockType,
