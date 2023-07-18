@@ -13,6 +13,4 @@ abstract class Signer {
   Future<List<int>> sign(List<int> message);
 
   Future<List<int>> signTx(AccountBlockTemplate tx);
-
-  Future<bool> verify(List<int> signature, List<int> message);
 }
