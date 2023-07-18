@@ -15,7 +15,7 @@ class Zenon {
   static final Zenon _singleton = Zenon._internal();
 
   Signer? defaultKeyPair;
-  KeyStore? defaultKeyStore;
+  Wallet? defaultKeyStore;
   File? defaultKeyStorePath;
 
   late WsClient wsClient;
