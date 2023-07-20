@@ -2,29 +2,29 @@ import 'package:znn_sdk_dart/src/model/primitives.dart';
 
 class UncollectedReward {
   final Address address;
-  final int znnAmount;
-  final int qsrAmount;
+  final BigInt znnAmount;
+  final BigInt qsrAmount;
 
   UncollectedReward.fromJson(Map<String, dynamic> json)
       : address = Address.parse(json['address']),
-        znnAmount = json['znnAmount'],
-        qsrAmount = json['qsrAmount'];
+        znnAmount = BigInt.parse(json['znnAmount']),
+        qsrAmount = BigInt.parse(json['qsrAmount']);
 }
 
 class RewardHistoryEntry {
   final int epoch;
-  final int znnAmount;
-  final int qsrAmount;
+  final BigInt znnAmount;
+  final BigInt qsrAmount;
 
   RewardHistoryEntry.fromJson(Map<String, dynamic> json)
       : epoch = json['epoch'],
-        znnAmount = json['znnAmount'],
-        qsrAmount = json['qsrAmount'];
+        znnAmount = BigInt.parse(json['znnAmount']),
+        qsrAmount = BigInt.parse(json['qsrAmount']);
 
   Map<String, dynamic> toJson() => {
         'epoch': epoch,
-        'znnAmount': znnAmount,
-        'qsrAmount': qsrAmount,
+        'znnAmount': znnAmount.toString(),
+        'qsrAmount': qsrAmount.toString(),
       };
 }
 

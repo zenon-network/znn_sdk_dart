@@ -2,20 +2,23 @@ import 'package:znn_sdk_dart/src/model/primitives.dart';
 
 class SwapAssetEntry {
   Hash keyIdHash;
-  int qsr;
-  int znn;
+  BigInt qsr;
+  BigInt znn;
 
   SwapAssetEntry(
       {required this.keyIdHash, required this.qsr, required this.znn});
 
   SwapAssetEntry.fromJson(this.keyIdHash, Map<String, dynamic> json)
-      : qsr = json['qsr'],
-        znn = json['znn'];
+      : qsr = BigInt.parse(json['qsr']),
+        znn = BigInt.parse(json['znn']);
 
-  Map<String, dynamic> toJson() =>
-      {'keyIdHash': keyIdHash.toString(), 'qsr': qsr, 'znn': znn};
+  Map<String, dynamic> toJson() => {
+        'keyIdHash': keyIdHash.toString(),
+        'qsr': qsr.toString(),
+        'znn': znn.toString()
+      };
 
-  bool hasBalance() => qsr > 0 || znn > 0;
+  bool hasBalance() => qsr > BigInt.zero || znn > BigInt.zero;
 }
 
 class SwapLegacyPillarEntry {

@@ -31,7 +31,7 @@ class AccountBlockTemplate {
   // Send information
   Address toAddress;
 
-  int amount;
+  BigInt amount;
   TokenStandard tokenStandard;
 
   // Receive information
@@ -65,7 +65,7 @@ class AccountBlockTemplate {
         momentumAcknowledged = emptyHashHeight,
         address = emptyAddress,
         toAddress = toAddress ?? emptyAddress,
-        amount = amount ?? 0,
+        amount = amount ?? BigInt.zero,
         tokenStandard =
             tokenStandard ?? TokenStandard.parse(emptyTokenStandard),
         fromBlockHash = fromBlockHash ?? emptyHash,
@@ -84,7 +84,7 @@ class AccountBlockTemplate {
   factory AccountBlockTemplate.send(
     Address toAddress,
     TokenStandard tokenStandard,
-    int amount, [
+    BigInt amount, [
     List<int>? data,
   ]) =>
       AccountBlockTemplate(
@@ -96,7 +96,7 @@ class AccountBlockTemplate {
       );
 
   factory AccountBlockTemplate.callContract(Address toAddress,
-          TokenStandard tokenStandard, int amount, List<int> data) =>
+          TokenStandard tokenStandard, BigInt amount, List<int> data) =>
       AccountBlockTemplate(
           blockType: BlockTypeEnum.userSend.index,
           toAddress: toAddress,
@@ -116,7 +116,7 @@ class AccountBlockTemplate {
             HashHeight.fromJson(json['momentumAcknowledged']),
         address = Address.parse(json['address']),
         toAddress = Address.parse(json['toAddress']),
-        amount = json['amount'].toInt(),
+        amount = BigInt.parse(json['amount']),
         tokenStandard = TokenStandard.parse(json['tokenStandard']),
         fusedPlasma = json["fusedPlasma"],
         data = (json['data'] == null
@@ -145,7 +145,7 @@ class AccountBlockTemplate {
     j['momentumAcknowledged'] = momentumAcknowledged.toJson();
     j['address'] = address.toString();
     j['toAddress'] = toAddress.toString();
-    j['amount'] = amount;
+    j['amount'] = amount.toString();
     j['tokenStandard'] = tokenStandard.toString();
     j['fromBlockHash'] = fromBlockHash.toString();
     j['data'] = BytesUtils.bytesToBase64(data);

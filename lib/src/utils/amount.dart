@@ -1,14 +1,12 @@
-import 'dart:math' show pow;
+import 'package:big_decimal/big_decimal.dart';
 
 class AmountUtils {
-  static int extractDecimals(double num, int decimals) =>
-      (num * pow(10, decimals)).toInt();
+  // This methods removes decimals and returns a BigInt
+  static BigInt extractDecimals(num num, int decimals) =>
+      BigInt.parse(num.toStringAsFixed(decimals).replaceAll('.', ''));
 
-  static num addDecimals(int num, int decimals) {
-    var numberWithDecimals = num / pow(10, decimals);
-    if (numberWithDecimals == numberWithDecimals.toInt()) {
-      return numberWithDecimals.toInt();
-    }
-    return numberWithDecimals;
+  static String addDecimals(BigInt number, int decimals) {
+    return BigDecimal.createAndStripZerosForScale(number, decimals, 0)
+        .toPlainString();
   }
 }

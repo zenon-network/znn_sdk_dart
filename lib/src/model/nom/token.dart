@@ -6,11 +6,11 @@ class Token {
   String name;
   String symbol;
   String domain;
-  int totalSupply;
+  BigInt totalSupply;
   int decimals;
   Address owner;
   TokenStandard tokenStandard;
-  int maxSupply;
+  BigInt maxSupply;
   bool isBurnable;
   bool isMintable;
   bool isUtility;
@@ -33,11 +33,11 @@ class Token {
         json['name'],
         json['symbol'],
         json['domain'],
-        json['totalSupply'].toInt(),
+        BigInt.parse(json['totalSupply']),
         json['decimals'],
         Address.parse(json['owner']),
         TokenStandard.parse(json['tokenStandard']),
-        json['maxSupply'].toInt(),
+        BigInt.parse(json['maxSupply']),
         json['isBurnable'],
         json['isMintable'],
         json['isUtility'],
@@ -48,11 +48,11 @@ class Token {
     data['name'] = name;
     data['symbol'] = symbol;
     data['domain'] = domain;
-    data['totalSupply'] = totalSupply;
+    data['totalSupply'] = totalSupply.toString();
     data['decimals'] = decimals;
     data['owner'] = owner.toString();
     data['tokenStandard'] = tokenStandard.toString();
-    data['maxSupply'] = maxSupply;
+    data['maxSupply'] = maxSupply.toString();
     data['isBurnable'] = isBurnable;
     data['isMintable'] = isMintable;
     data['isUtility'] = isUtility;

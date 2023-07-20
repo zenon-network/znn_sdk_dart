@@ -32,8 +32,8 @@ class PlasmaApi {
         'embedded.plasma.getRequiredFusionAmount', [requiredPlasma]);
   }
 
-  int getPlasmaByQsr(double qsrAmount) {
-    return qsrAmount.toInt() * 2100;
+  BigInt getPlasmaByQsr(BigInt qsrAmount) {
+    return qsrAmount * BigInt.from(2100);
   }
 
   Future<GetRequiredResponse> getRequiredPoWForAccountBlock(
@@ -44,13 +44,13 @@ class PlasmaApi {
   }
 
   // Contract methods
-  AccountBlockTemplate fuse(Address beneficiary, int amount) {
+  AccountBlockTemplate fuse(Address beneficiary, BigInt amount) {
     return AccountBlockTemplate.callContract(plasmaAddress, qsrZts, amount,
         Definitions.plasma.encodeFunction('Fuse', [beneficiary]));
   }
 
   AccountBlockTemplate cancel(Hash id) {
-    return AccountBlockTemplate.callContract(plasmaAddress, znnZts, 0,
+    return AccountBlockTemplate.callContract(plasmaAddress, znnZts, BigInt.zero,
         Definitions.plasma.encodeFunction('CancelFuse', [id.getBytes()]));
   }
 }

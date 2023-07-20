@@ -6,7 +6,6 @@ import 'package:znn_sdk_dart/src/model/model.dart';
 import 'package:znn_sdk_dart/src/model/primitives/address.dart';
 import 'package:znn_sdk_dart/src/model/primitives/hash.dart';
 import 'package:znn_sdk_dart/src/model/primitives/token_standard.dart';
-import 'package:znn_sdk_dart/src/utils/utils.dart';
 
 class AcceleratorApi {
   late Client client;
@@ -52,22 +51,21 @@ class AcceleratorApi {
 
   // Contract methods
   AccountBlockTemplate createProject(String name, String description,
-      String url, int znnFundsNeeded, int qsrFundsNeeded) {
+      String url, BigInt znnFundsNeeded, BigInt qsrFundsNeeded) {
     return AccountBlockTemplate.callContract(
         acceleratorAddress,
         znnZts,
-        AmountUtils.extractDecimals(
-            projectCreationFeeInZnn.toDouble(), znnDecimals),
+        projectCreationFeeInZnn,
         Definitions.accelerator.encodeFunction('CreateProject',
             [name, description, url, znnFundsNeeded, qsrFundsNeeded]));
   }
 
   AccountBlockTemplate addPhase(Hash id, String name, String description,
-      String url, int znnFundsNeeded, int qsrFundsNeeded) {
+      String url, BigInt znnFundsNeeded, BigInt qsrFundsNeeded) {
     return AccountBlockTemplate.callContract(
         acceleratorAddress,
         znnZts,
-        0,
+        BigInt.zero,
         Definitions.accelerator.encodeFunction('AddPhase', [
           id.getBytes(),
           name,
@@ -79,11 +77,11 @@ class AcceleratorApi {
   }
 
   AccountBlockTemplate updatePhase(Hash id, String name, String description,
-      String url, int znnFundsNeeded, int qsrFundsNeeded) {
+      String url, BigInt znnFundsNeeded, BigInt qsrFundsNeeded) {
     return AccountBlockTemplate.callContract(
         acceleratorAddress,
         znnZts,
-        0,
+        BigInt.zero,
         Definitions.accelerator.encodeFunction('UpdatePhase', [
           id.getBytes(),
           name,
@@ -94,7 +92,7 @@ class AcceleratorApi {
         ]));
   }
 
-  AccountBlockTemplate donate(int amount, TokenStandard zts) {
+  AccountBlockTemplate donate(BigInt amount, TokenStandard zts) {
     return AccountBlockTemplate.callContract(acceleratorAddress, zts, amount,
         Definitions.accelerator.encodeFunction('Donate', []));
   }
@@ -103,7 +101,7 @@ class AcceleratorApi {
     return AccountBlockTemplate.callContract(
         acceleratorAddress,
         znnZts,
-        0,
+        BigInt.zero,
         Definitions.accelerator
             .encodeFunction('VoteByName', [id.getBytes(), pillarName, vote]));
   }
@@ -112,7 +110,7 @@ class AcceleratorApi {
     return AccountBlockTemplate.callContract(
         acceleratorAddress,
         znnZts,
-        0,
+        BigInt.zero,
         Definitions.accelerator
             .encodeFunction('VoteByProdAddress', [id.getBytes(), vote]));
   }
