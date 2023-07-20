@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:znn_sdk_dart/src/model/nom.dart';
 import 'package:znn_sdk_dart/src/model/primitives.dart';
-import 'package:znn_sdk_dart/src/utils/utils.dart';
 
 class AccountInfo {
   String? address;
@@ -22,20 +21,14 @@ class AccountInfo {
         : [];
   }
 
-  int? znn() => getBalance(znnZts);
+  BigInt? znn() => getBalance(znnZts);
 
-  int? qsr() => getBalance(qsrZts);
+  BigInt? qsr() => getBalance(qsrZts);
 
-  int getBalance(TokenStandard tokenStandard) {
+  BigInt getBalance(TokenStandard tokenStandard) {
     var info = balanceInfoList!.firstWhereOrNull(
         (element) => element.token!.tokenStandard == tokenStandard);
-    return info?.balance ?? 0;
-  }
-
-  num getBalanceWithDecimals(TokenStandard tokenStandard) {
-    var info = balanceInfoList!.firstWhereOrNull(
-        (element) => element.token!.tokenStandard == tokenStandard);
-    return info?.balanceWithDecimals! ?? 0;
+    return info?.balance ?? BigInt.zero;
   }
 
   Token? findTokenByTokenStandard(TokenStandard tokenStandard) {
@@ -53,19 +46,14 @@ class AccountInfo {
 
 class BalanceInfoListItem {
   Token? token;
-  int? balance;
-  num? balanceWithDecimals;
-  String? balanceFormatted;
+  BigInt? balance;
 
-  BalanceInfoListItem({this.token, this.balance}) {
-    balanceWithDecimals = AmountUtils.addDecimals(balance!, token!.decimals);
-    balanceFormatted = '$balanceWithDecimals ${token!.symbol}';
-  }
+  BalanceInfoListItem({required this.token, required this.balance}) {}
 
   factory BalanceInfoListItem.fromJson(Map<String, dynamic> json) =>
       BalanceInfoListItem(
         token: json['token'] != null ? Token.fromJson(json['token']) : null,
-        balance: json['balance'].toInt(),
+        balance: BigInt.parse(json['balance']),
       );
 
   Map<String, dynamic> toJson() {
@@ -73,7 +61,7 @@ class BalanceInfoListItem {
     if (token != null) {
       data['token'] = token!.toJson();
     }
-    data['balance'] = balance;
+    data['balance'] = balance.toString();
     return data;
   }
 }

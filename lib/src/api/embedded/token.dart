@@ -39,8 +39,8 @@ class TokenApi {
       String tokenName,
       String tokenSymbol,
       String tokenDomain,
-      int totalSupply,
-      int maxSupply,
+      BigInt totalSupply,
+      BigInt maxSupply,
       int decimals,
       bool mintable,
       bool burnable,
@@ -63,16 +63,16 @@ class TokenApi {
   }
 
   AccountBlockTemplate mintToken(
-      TokenStandard tokenStandard, int amount, Address receiveAddress) {
+      TokenStandard tokenStandard, BigInt amount, Address receiveAddress) {
     return AccountBlockTemplate.callContract(
         tokenAddress,
         znnZts,
-        0,
+        BigInt.zero,
         Definitions.token
             .encodeFunction('Mint', [tokenStandard, amount, receiveAddress]));
   }
 
-  AccountBlockTemplate burnToken(TokenStandard tokenStandard, int amount) {
+  AccountBlockTemplate burnToken(TokenStandard tokenStandard, BigInt amount) {
     return AccountBlockTemplate.callContract(tokenAddress, tokenStandard,
         amount, Definitions.token.encodeFunction('Burn', []));
   }
@@ -82,7 +82,7 @@ class TokenApi {
     return AccountBlockTemplate.callContract(
         tokenAddress,
         znnZts,
-        0,
+        BigInt.zero,
         Definitions.token.encodeFunction(
             'UpdateToken', [tokenStandard, owner, isMintable, isBurnable]));
   }

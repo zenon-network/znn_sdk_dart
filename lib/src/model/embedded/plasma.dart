@@ -3,12 +3,12 @@ import 'package:znn_sdk_dart/src/model/primitives.dart';
 import 'package:znn_sdk_dart/src/utils/utils.dart';
 
 class FusionEntryList {
-  int qsrAmount;
+  BigInt qsrAmount;
   int count;
   List<FusionEntry> list;
 
   FusionEntryList.fromJson(Map<String, dynamic> json)
-      : qsrAmount = json['qsrAmount'],
+      : qsrAmount = BigInt.parse(json['qsrAmount']),
         count = json['count'],
         list =
             (json['list'] as List).map((j) => FusionEntry.fromJson(j)).toList();
@@ -16,12 +16,12 @@ class FusionEntryList {
   Map<String, dynamic> toJson() => {
         'count': count,
         'list': list.map((v) => v.toJson()).toList(),
-        'qsrAmount': qsrAmount
+        'qsrAmount': qsrAmount.toString()
       };
 }
 
 class FusionEntry {
-  int qsrAmount;
+  BigInt qsrAmount;
   Address beneficiary;
   int expirationHeight;
   Hash id;
@@ -34,13 +34,13 @@ class FusionEntry {
       required this.qsrAmount});
 
   FusionEntry.fromJson(Map<String, dynamic> json)
-      : qsrAmount = json['qsrAmount'],
+      : qsrAmount = BigInt.parse(json['qsrAmount']),
         beneficiary = Address.parse(json['beneficiary']),
         expirationHeight = json['expirationHeight'],
         id = Hash.parse(json['id']);
 
   Map<String, dynamic> toJson() => {
-        'qsrAmount': qsrAmount,
+        'qsrAmount': qsrAmount.toString(),
         'beneficiary': beneficiary.toString(),
         'expirationHeight': expirationHeight,
         'id': id.toString()
@@ -50,7 +50,7 @@ class FusionEntry {
 class PlasmaInfo {
   final int currentPlasma;
   final int maxPlasma;
-  final int qsrAmount;
+  final BigInt qsrAmount;
 
   PlasmaInfo(
       {required this.currentPlasma,
@@ -60,7 +60,7 @@ class PlasmaInfo {
   factory PlasmaInfo.fromJson(Map<String, dynamic> json) => PlasmaInfo(
         currentPlasma: json['currentPlasma'],
         maxPlasma: json['maxPlasma'],
-        qsrAmount: json['qsrAmount'],
+        qsrAmount: BigInt.parse(json['qsrAmount']),
       );
 }
 
