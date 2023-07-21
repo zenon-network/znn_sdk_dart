@@ -14,12 +14,12 @@ var noKeyPairSelectedException = ZnnSdkException('No default keyPair selected');
 class Zenon {
   static final Zenon _singleton = Zenon._internal();
 
-  Signer? defaultKeyPair;
+  WalletAccount? defaultKeyPair;
   Wallet? defaultKeyStore;
   File? defaultKeyStorePath;
 
   late WsClient wsClient;
-  late KeyStoreManager keyStoreManager;
+  late WalletManager keyStoreManager;
 
   late api.LedgerApi ledger;
   late api.StatsApi stats;
@@ -46,14 +46,14 @@ class Zenon {
   }
 
   Future<AccountBlockTemplate> send(AccountBlockTemplate transaction,
-      {Signer? currentKeyPair, void Function(PowStatus)? generatingPowCallback, waitForRequiredPlasma = false}) async {
+      {WalletAccount? currentKeyPair, void Function(PowStatus)? generatingPowCallback, waitForRequiredPlasma = false}) async {
     currentKeyPair ??= defaultKeyPair;
     if (currentKeyPair == null) throw noKeyPairSelectedException;
     return BlockUtils.send(transaction, currentKeyPair, generatingPowCallback: generatingPowCallback, waitForRequiredPlasma: waitForRequiredPlasma);
   }
 
-  Future<bool> requiresPoW(AccountBlockTemplate transaction, {Signer? blockSigningKey}) async {
+  Future<bool> requiresPoW(AccountBlockTemplate transaction, {WalletAccount? blockSigningKey}) async {
     blockSigningKey ??= defaultKeyPair;
-    return BlockUtils.requiresPoW(transaction, signer: blockSigningKey);
+    return BlockUtils.requiresPoW(transaction, account: blockSigningKey);
   }
 }

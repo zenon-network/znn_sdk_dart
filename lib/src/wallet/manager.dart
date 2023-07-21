@@ -8,6 +8,12 @@ import 'package:znn_sdk_dart/src/global.dart';
 import 'package:znn_sdk_dart/src/wallet/exceptions.dart';
 import 'package:znn_sdk_dart/src/wallet/keyfile.dart';
 import 'package:znn_sdk_dart/src/wallet/keystore.dart';
+import 'package:znn_sdk_dart/src/wallet/interfaces.dart';
+
+class KeyStoreOptions implements WalletOptions {
+  String decryptionPassword;
+  KeyStoreOptions({required this.decryptionPassword});
+}
 
 class SaveKeyStoreArguments {
   final KeyStore store;
@@ -23,7 +29,7 @@ void saveKeyStoreFunction(SaveKeyStoreArguments args) async {
   args.port.send(json.encode(encrypted));
 }
 
-class KeyStoreManager {
+class KeyStoreManager implements WalletManager {
   Directory? walletPath;
   KeyStore? keyStoreInUse;
 
@@ -118,5 +124,36 @@ class KeyStoreManager {
     var store = KeyStore.fromMnemonic(mnemonic);
     var keyStore = await saveKeyStore(store, passphrase, name: name);
     return keyStore;
+  }
+
+  Future<Iterable<WalletDefinition>> getWalletDefinitions() async {
+    var keyStoreList = <KeyStoreDefinition>[];
+    for (var keyStore in walletPath!.listSync()) {
+      if (keyStore is File) {
+        keyStoreList.add(KeyStoreDefinition(file: keyStore));
+      }
+    }
+    return keyStoreList;
+  }
+
+  Future<Wallet> getWallet(
+      WalletDefinition walletDefinition, WalletOptions walletOptions) async {
+    if (!(walletDefinition is KeyStoreDefinition)) {
+      throw Exception("Unsupported wallet definition ${walletDefinition.runtimeType}.");
+    }
+    if (!(walletOptions is KeyStoreOptions)) {
+      throw Exception("Unsupported wallet options ${walletOptions.runtimeType}.");
+    }
+    return await readKeyStore(walletOptions.decryptionPassword,
+        walletDefinition.file);
+  }
+
+  Future<bool> supportsWallet(WalletDefinition walletDefinition) async {
+    if (walletDefinition is KeyStoreDefinition) {
+      for (var definition in await getWalletDefinitions()) {
+        if (definition.walletId == walletDefinition.walletId) return true;
+      }
+    }
+    return false;
   }
 }

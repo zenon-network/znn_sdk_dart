@@ -97,7 +97,7 @@ class BlockUtils {
   }
 
   static Future<bool> _checkAndSetFields(
-      AccountBlockTemplate transaction, Signer wallet) async {
+      AccountBlockTemplate transaction, WalletAccount wallet) async {
     var z = Zenon();
 
     transaction.address = await wallet.getAddress();
@@ -162,23 +162,23 @@ class BlockUtils {
   }
 
   static Future<bool> _setHashAndSignature(
-      AccountBlockTemplate transaction, Signer signer) async {
+      AccountBlockTemplate transaction, WalletAccount account) async {
     transaction.hash = getTransactionHash(transaction);
-    transaction.signature = await signer.signTx(transaction);
+    transaction.signature = await account.signTx(transaction);
     return true;
   }
 
   static Future<AccountBlockTemplate> send(
-      AccountBlockTemplate transaction, Signer signer,
+      AccountBlockTemplate transaction, WalletAccount account,
       {void Function(PowStatus)? generatingPowCallback,
       waitForRequiredPlasma = false}) async {
     var z = Zenon();
 
-    await _checkAndSetFields(transaction, signer);
+    await _checkAndSetFields(transaction, account);
     await _setDifficulty(transaction,
         generatingPowCallback: generatingPowCallback,
         waitForRequiredPlasma: waitForRequiredPlasma);
-    await _setHashAndSignature(transaction, signer);
+    await _setHashAndSignature(transaction, account);
     await z.ledger.publishRawTransaction(transaction);
 
     logger.info('Published account-block');
@@ -186,10 +186,10 @@ class BlockUtils {
   }
 
   static Future<bool> requiresPoW(AccountBlockTemplate transaction,
-      {Signer? signer}) async {
+      {WalletAccount? account}) async {
     var z = Zenon();
 
-    transaction.address = await signer!.getAddress();
+    transaction.address = await account!.getAddress();
     var powParam = GetRequiredParam(
         address: transaction.address,
         blockType: transaction.blockType,

@@ -5,7 +5,7 @@ import 'package:znn_sdk_dart/src/model/primitives.dart';
 import 'package:znn_sdk_dart/src/wallet/interfaces.dart';
 import 'package:znn_sdk_dart/src/model/nom/account_block_template.dart';
 
-class KeyPair implements Signer {
+class KeyPair implements WalletAccount {
   List<int>? privateKey;
   List<int>? publicKey;
   Address? _address;

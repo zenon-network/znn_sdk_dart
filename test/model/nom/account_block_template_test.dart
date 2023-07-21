@@ -17,7 +17,7 @@ void main() async {
   },
   "address": "z1qzal6c5s9rjnnxd2z7dvdhjxpmmj4fmw56a0mz",
   "toAddress": "z1qr4pexnnfaexqqz8nscjjcsajy5hdqfkgadvwx",
-  "amount": 10000000000,
+  "amount": "10000000000",
   "tokenStandard": "zts1tfjkummwyppk76twsnv50e",
   "fromBlockHash": "0000000000000000000000000000000000000000000000000000000000000000",
   "data": "",

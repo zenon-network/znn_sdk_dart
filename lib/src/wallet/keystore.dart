@@ -3,11 +3,31 @@ import 'dart:io';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:cryptography/cryptography.dart' as cryptography;
 import 'package:hex/hex.dart';
+import 'package:path/path.dart' as path;
 import 'package:znn_sdk_dart/src/crypto/crypto.dart';
 import 'package:znn_sdk_dart/src/model/primitives.dart';
 import 'package:znn_sdk_dart/src/wallet/derivation.dart';
 import 'package:znn_sdk_dart/src/wallet/keypair.dart';
+import 'package:znn_sdk_dart/src/wallet/exceptions.dart';
 import 'package:znn_sdk_dart/src/wallet/interfaces.dart';
+
+class KeyStoreDefinition implements WalletDefinition {
+  File file;
+
+  KeyStoreDefinition({required this.file}) {
+    if (!file.existsSync()) {
+      throw InvalidKeyStorePath('Given keyStore does not exist ($file)');
+    }
+  }
+
+  String get walletId {
+    return file.path;
+  }
+
+  String get walletName {
+    return path.basename(file.path);
+  }
+}
 
 class KeyStore implements Wallet {
   String? mnemonic;
@@ -49,7 +69,7 @@ class KeyStore implements Wallet {
     setMnemonic(bip39.entropyToMnemonic(entropy));
   }
 
-  Future<Signer> getSigner([int index = 0]) async {
+  Future<WalletAccount> getAccount([int index = 0]) async {
     return getKeyPair(index);
   }
 
