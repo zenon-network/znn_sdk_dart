@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:znn_sdk_dart/src/api/api.dart' as api;
 import 'package:znn_sdk_dart/src/client/client.dart';
@@ -16,7 +15,7 @@ class Zenon {
 
   WalletAccount? defaultKeyPair;
   Wallet? defaultKeyStore;
-  File? defaultKeyStorePath;
+  WalletDefinition? defaultKeyStorePath;
 
   late WsClient wsClient;
   late WalletManager keyStoreManager;
