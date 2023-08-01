@@ -14,9 +14,9 @@ class PillarApi {
   }
 
   // Common RPC
-  Future<int> getDepositedQsr(Address address) async {
-    return await client
-        .sendRequest('embedded.pillar.getDepositedQsr', [address.toString()]);
+  Future<BigInt> getDepositedQsr(Address address) async {
+    return BigInt.parse(await client
+        .sendRequest('embedded.pillar.getDepositedQsr', [address.toString()]));
   }
 
   Future<UncollectedReward> getUncollectedReward(Address address) async {
@@ -34,9 +34,9 @@ class PillarApi {
   }
 
   // RPC
-  Future<int> getQsrRegistrationCost() async {
-    return await client
-        .sendRequest('embedded.pillar.getQsrRegistrationCost', []);
+  Future<BigInt> getQsrRegistrationCost() async {
+    return BigInt.parse(
+        await client.sendRequest('embedded.pillar.getQsrRegistrationCost', []));
   }
 
   Future<PillarInfoList> getAll(
@@ -130,7 +130,7 @@ class PillarApi {
     return AccountBlockTemplate.callContract(
         pillarAddress,
         znnZts,
-        0,
+        BigInt.zero,
         Definitions.pillar.encodeFunction('UpdatePillar', [
           name,
           producerAddress,
@@ -141,33 +141,33 @@ class PillarApi {
   }
 
   AccountBlockTemplate revoke(String name) {
-    return AccountBlockTemplate.callContract(pillarAddress, znnZts, 0,
+    return AccountBlockTemplate.callContract(pillarAddress, znnZts, BigInt.zero,
         Definitions.pillar.encodeFunction('Revoke', [name]));
   }
 
   AccountBlockTemplate delegate(String name) {
-    return AccountBlockTemplate.callContract(pillarAddress, znnZts, 0,
+    return AccountBlockTemplate.callContract(pillarAddress, znnZts, BigInt.zero,
         Definitions.pillar.encodeFunction('Delegate', [name]));
   }
 
   AccountBlockTemplate undelegate() {
-    return AccountBlockTemplate.callContract(pillarAddress, znnZts, 0,
+    return AccountBlockTemplate.callContract(pillarAddress, znnZts, BigInt.zero,
         Definitions.pillar.encodeFunction('Undelegate', []));
   }
 
   // Common contract methods
   AccountBlockTemplate collectReward() {
-    return AccountBlockTemplate.callContract(pillarAddress, znnZts, 0,
+    return AccountBlockTemplate.callContract(pillarAddress, znnZts, BigInt.zero,
         Definitions.common.encodeFunction('CollectReward', []));
   }
 
-  AccountBlockTemplate depositQsr(int amount) {
+  AccountBlockTemplate depositQsr(BigInt amount) {
     return AccountBlockTemplate.callContract(pillarAddress, qsrZts, amount,
         Definitions.common.encodeFunction('DepositQsr', []));
   }
 
   AccountBlockTemplate withdrawQsr() {
-    return AccountBlockTemplate.callContract(pillarAddress, znnZts, 0,
+    return AccountBlockTemplate.callContract(pillarAddress, znnZts, BigInt.zero,
         Definitions.common.encodeFunction('WithdrawQsr', []));
   }
 }

@@ -1,8 +1,8 @@
 import 'package:znn_sdk_dart/src/model/primitives.dart';
 
 class StakeList {
-  int totalAmount;
-  int totalWeightedAmount;
+  BigInt totalAmount;
+  BigInt totalWeightedAmount;
   int count;
   List<StakeEntry> list;
 
@@ -13,8 +13,8 @@ class StakeList {
       required this.list});
 
   StakeList.fromJson(Map<String, dynamic> json)
-      : totalAmount = json['totalAmount'],
-        totalWeightedAmount = json['totalWeightedAmount'],
+      : totalAmount = BigInt.parse(json['totalAmount']),
+        totalWeightedAmount = BigInt.parse(json['totalWeightedAmount']),
         count = json['count'],
         list = (json['list'] as List)
             .map((entry) => StakeEntry.fromJson(entry))
@@ -22,8 +22,8 @@ class StakeList {
 }
 
 class StakeEntry {
-  final int amount;
-  final int weightedAmount;
+  final BigInt amount;
+  final BigInt weightedAmount;
   final int startTimestamp;
   final int expirationTimestamp;
   final Address address;
@@ -38,8 +38,8 @@ class StakeEntry {
       required this.id});
 
   factory StakeEntry.fromJson(Map<String, dynamic> json) => StakeEntry(
-      amount: json['amount'],
-      weightedAmount: json['weightedAmount'],
+      amount: BigInt.parse(json['amount']),
+      weightedAmount: BigInt.parse(json['weightedAmount']),
       startTimestamp: json['startTimestamp'],
       expirationTimestamp: json['expirationTimestamp'],
       address: Address.parse(json['address']),
