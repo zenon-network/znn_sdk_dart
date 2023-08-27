@@ -114,9 +114,7 @@ class Definitions {
     {"type":"function","name":"Update","inputs":[]},
     {"type":"function","name":"Donate","inputs":[]},
     {"type":"function","name":"VoteByName","inputs":[{"name":"id","type":"hash"},{"name":"name","type":"string"},{"name":"vote","type":"uint8"}]},
-    {"type":"function","name":"VoteByProdAddress","inputs":[{"name":"id","type":"hash"},{"name":"vote","type":"uint8"}]},
-    {"type":"variable","name":"timeChallengeInfo","inputs":[{"name":"methodName","type":"string"},{"name":"paramsHash","type":"hash"},{"name":"challengeStartHeight","type":"uint64"}]},
-    {"type":"variable","name":"securityInfo","inputs":[{"name":"guardians","type":"address[]"},{"name":"guardiansVotes","type":"address[]"},{"name":"administratorDelay","type":"uint64"},{"name":"softDelay","type":"uint64"}]}
+    {"type":"function","name":"VoteByProdAddress","inputs":[{"name":"id","type":"hash"},{"name":"vote","type":"uint8"}]}
   ]''';
 
   // ABI definitions of embedded contracts
