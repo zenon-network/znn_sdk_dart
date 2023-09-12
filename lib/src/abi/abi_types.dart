@@ -221,7 +221,7 @@ class BytesType extends AbiType {
       throw Error();
     }
     var ret = List<int>.filled(
-        ((((bb.length - 1) ~/ AbiType.int32Size) + 1) * AbiType.int32Size)
+        bb.isEmpty ? 0 : ((((bb.length - 1) ~/ AbiType.int32Size) + 1) * AbiType.int32Size)
             .toInt(),
         0,
         growable: true);
