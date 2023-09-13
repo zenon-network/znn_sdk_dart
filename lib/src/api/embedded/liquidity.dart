@@ -88,7 +88,7 @@ class LiquidityApi {
       List<String> tokenStandards,
       List<int> znnPercentages,
       List<int> qsrPercentages,
-      List<int> minAmounts) {
+      List<BigInt> minAmounts) {
     return AccountBlockTemplate.callContract(
         liquidityAddress,
         znnZts,
