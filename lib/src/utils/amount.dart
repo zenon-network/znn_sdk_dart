@@ -4,6 +4,9 @@ class AmountUtils {
   // This methods removes decimals and returns a BigInt
   static BigInt extractDecimals(String amount, int decimals) {
     if (!amount.contains('.')) {
+      if (decimals == 0 && amount.isEmpty) {
+        return BigInt.zero;
+      }
       return BigInt.parse(amount + ''.padRight(decimals, '0'));
     }
     List<String> parts = amount.split('.');
