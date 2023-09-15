@@ -21,18 +21,12 @@ class SporkApi {
 
   // Contract methods
   AccountBlockTemplate createSpork(String name, String description) {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        sporkAddress, znnZts, BigInt.zero,
+    return AccountBlockTemplate.callContract(sporkAddress, znnZts, BigInt.zero,
         Definitions.spork.encodeFunction('CreateSpork', [name, description]));
   }
 
   AccountBlockTemplate activateSpork(Hash id) {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        sporkAddress, znnZts, BigInt.zero,
+    return AccountBlockTemplate.callContract(sporkAddress, znnZts, BigInt.zero,
         Definitions.spork.encodeFunction('ActivateSpork', [id.getBytes()]));
   }
 }

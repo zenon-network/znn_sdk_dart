@@ -90,8 +90,6 @@ class PillarApi {
       [int giveBlockRewardPercentage = 0,
       int giveDelegateRewardPercentage = 100]) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         pillarAddress,
         znnZts,
         pillarRegisterZnnAmount,
@@ -109,8 +107,6 @@ class PillarApi {
       [int giveBlockRewardPercentage = 0,
       int giveDelegateRewardPercentage = 100]) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         pillarAddress,
         znnZts,
         pillarRegisterZnnAmount,
@@ -132,8 +128,6 @@ class PillarApi {
       int giveBlockRewardPercentage,
       int giveDelegateRewardPercentage) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         pillarAddress,
         znnZts,
         BigInt.zero,
@@ -147,51 +141,33 @@ class PillarApi {
   }
 
   AccountBlockTemplate revoke(String name) {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        pillarAddress, znnZts, BigInt.zero,
+    return AccountBlockTemplate.callContract(pillarAddress, znnZts, BigInt.zero,
         Definitions.pillar.encodeFunction('Revoke', [name]));
   }
 
   AccountBlockTemplate delegate(String name) {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        pillarAddress, znnZts, BigInt.zero,
+    return AccountBlockTemplate.callContract(pillarAddress, znnZts, BigInt.zero,
         Definitions.pillar.encodeFunction('Delegate', [name]));
   }
 
   AccountBlockTemplate undelegate() {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        pillarAddress, znnZts, BigInt.zero,
+    return AccountBlockTemplate.callContract(pillarAddress, znnZts, BigInt.zero,
         Definitions.pillar.encodeFunction('Undelegate', []));
   }
 
   // Common contract methods
   AccountBlockTemplate collectReward() {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        pillarAddress, znnZts, BigInt.zero,
+    return AccountBlockTemplate.callContract(pillarAddress, znnZts, BigInt.zero,
         Definitions.common.encodeFunction('CollectReward', []));
   }
 
   AccountBlockTemplate depositQsr(BigInt amount) {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        pillarAddress, qsrZts, amount,
+    return AccountBlockTemplate.callContract(pillarAddress, qsrZts, amount,
         Definitions.common.encodeFunction('DepositQsr', []));
   }
 
   AccountBlockTemplate withdrawQsr() {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        pillarAddress, znnZts, BigInt.zero,
+    return AccountBlockTemplate.callContract(pillarAddress, znnZts, BigInt.zero,
         Definitions.common.encodeFunction('WithdrawQsr', []));
   }
 }

@@ -1,3 +1,4 @@
+import 'package:znn_sdk_dart/src/global.dart';
 import 'package:znn_sdk_dart/src/model/primitives.dart';
 import 'package:znn_sdk_dart/src/utils/utils.dart';
 
@@ -16,7 +17,7 @@ extension BlockTypeEnumExtension on BlockTypeEnum {
 }
 
 class AccountBlockTemplate {
-  int protocolVersion;
+  int version;
   int chainIdentifier;
   int blockType;
 
@@ -50,15 +51,15 @@ class AccountBlockTemplate {
   List<int> signature;
 
   AccountBlockTemplate(
-      {required this.protocolVersion, 
-      required this.chainIdentifier,
-      required this.blockType,
+      {required this.blockType,
       toAddress,
       amount,
       tokenStandard,
       fromBlockHash,
       data})
-      : hash = emptyHash,
+      : version = 1,
+        chainIdentifier = chainId,
+        hash = emptyHash,
         previousHash = emptyHash,
         height = 0,
         momentumAcknowledged = emptyHashHeight,
@@ -75,27 +76,18 @@ class AccountBlockTemplate {
         publicKey = [],
         signature = [];
 
-  factory AccountBlockTemplate.receive(
-    int protocolVersion, 
-    int chainIdentifier, 
-    Hash fromBlockHash) =>
+  factory AccountBlockTemplate.receive(Hash fromBlockHash) =>
       AccountBlockTemplate(
-          protocolVersion: protocolVersion,
-          chainIdentifier: chainIdentifier,
           blockType: BlockTypeEnum.userReceive.index,
           fromBlockHash: fromBlockHash);
 
   factory AccountBlockTemplate.send(
-    int protocolVersion, 
-    int chainIdentifier, 
     Address toAddress,
     TokenStandard tokenStandard,
     BigInt amount, [
     List<int>? data,
   ]) =>
       AccountBlockTemplate(
-        protocolVersion: protocolVersion,
-        chainIdentifier: chainIdentifier,
         blockType: BlockTypeEnum.userSend.index,
         toAddress: toAddress,
         tokenStandard: tokenStandard,
@@ -103,24 +95,17 @@ class AccountBlockTemplate {
         data: data,
       );
 
-  factory AccountBlockTemplate.callContract(
-    int protocolVersion, 
-    int chainIdentifier, 
-    Address toAddress,
-    TokenStandard tokenStandard, 
-    BigInt amount, 
-    List<int> data) =>
+  factory AccountBlockTemplate.callContract(Address toAddress,
+          TokenStandard tokenStandard, BigInt amount, List<int> data) =>
       AccountBlockTemplate(
-        protocolVersion: protocolVersion,
-        chainIdentifier: chainIdentifier,
-        blockType: BlockTypeEnum.userSend.index,
-        toAddress: toAddress,
-        tokenStandard: tokenStandard,
-        amount: amount,
-        data: data);
+          blockType: BlockTypeEnum.userSend.index,
+          toAddress: toAddress,
+          tokenStandard: tokenStandard,
+          amount: amount,
+          data: data);
 
   AccountBlockTemplate.fromJson(Map<String, dynamic> json)
-      : protocolVersion = json['version'],
+      : version = json['version'],
         blockType = json['blockType'],
         fromBlockHash = Hash.parse(json['fromBlockHash']),
         chainIdentifier = json['chainIdentifier'],
@@ -151,7 +136,7 @@ class AccountBlockTemplate {
   Map<String, dynamic> toJson() {
     final j = <String, dynamic>{};
 
-    j['version'] = protocolVersion;
+    j['version'] = version;
     j['chainIdentifier'] = chainIdentifier;
     j['blockType'] = blockType;
     j['hash'] = hash.toString();

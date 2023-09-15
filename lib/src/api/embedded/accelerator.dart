@@ -53,8 +53,6 @@ class AcceleratorApi {
   AccountBlockTemplate createProject(String name, String description,
       String url, BigInt znnFundsNeeded, BigInt qsrFundsNeeded) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         acceleratorAddress,
         znnZts,
         projectCreationFeeInZnn,
@@ -65,8 +63,6 @@ class AcceleratorApi {
   AccountBlockTemplate addPhase(Hash id, String name, String description,
       String url, BigInt znnFundsNeeded, BigInt qsrFundsNeeded) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         acceleratorAddress,
         znnZts,
         BigInt.zero,
@@ -83,8 +79,6 @@ class AcceleratorApi {
   AccountBlockTemplate updatePhase(Hash id, String name, String description,
       String url, BigInt znnFundsNeeded, BigInt qsrFundsNeeded) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         acceleratorAddress,
         znnZts,
         BigInt.zero,
@@ -99,17 +93,12 @@ class AcceleratorApi {
   }
 
   AccountBlockTemplate donate(BigInt amount, TokenStandard zts) {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        acceleratorAddress, zts, amount,
+    return AccountBlockTemplate.callContract(acceleratorAddress, zts, amount,
         Definitions.accelerator.encodeFunction('Donate', []));
   }
 
   AccountBlockTemplate voteByName(Hash id, String pillarName, int vote) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         acceleratorAddress,
         znnZts,
         BigInt.zero,
@@ -119,8 +108,6 @@ class AcceleratorApi {
 
   AccountBlockTemplate voteByProdAddress(Hash id, int vote) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         acceleratorAddress,
         znnZts,
         BigInt.zero,

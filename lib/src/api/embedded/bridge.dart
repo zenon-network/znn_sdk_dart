@@ -163,8 +163,6 @@ class BridgeApi {
     TokenStandard tokenStandard,
   ) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         bridgeAddress,
         tokenStandard,
         amount,
@@ -177,8 +175,6 @@ class BridgeApi {
 
   AccountBlockTemplate updateWrapRequest(Hash id, String signature) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         bridgeAddress,
         znnZts,
         BigInt.zero,
@@ -187,10 +183,7 @@ class BridgeApi {
   }
 
   AccountBlockTemplate halt(String signature) {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        bridgeAddress, znnZts, BigInt.zero,
+    return AccountBlockTemplate.callContract(bridgeAddress, znnZts, BigInt.zero,
         Definitions.bridge.encodeFunction('Halt', [signature]));
   }
 
@@ -200,8 +193,6 @@ class BridgeApi {
     String newPubKeySignature,
   ) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         bridgeAddress,
         znnZts,
         BigInt.zero,
@@ -214,8 +205,6 @@ class BridgeApi {
 
   AccountBlockTemplate redeem(Hash transactionHash, int logIndex) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         bridgeAddress,
         znnZts,
         BigInt.zero,
@@ -234,8 +223,6 @@ class BridgeApi {
     String signature,
   ) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         bridgeAddress,
         znnZts,
         BigInt.zero,
@@ -254,8 +241,6 @@ class BridgeApi {
   // Guardian contract methods
   AccountBlockTemplate proposeAdministrator(Address address) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         bridgeAddress,
         znnZts,
         BigInt.zero,
@@ -272,8 +257,6 @@ class BridgeApi {
     String metadata,
   ) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         bridgeAddress,
         znnZts,
         BigInt.zero,
@@ -288,8 +271,6 @@ class BridgeApi {
 
   AccountBlockTemplate removeNetwork(int networkClass, int chainId) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         bridgeAddress,
         znnZts,
         BigInt.zero,
@@ -311,8 +292,6 @@ class BridgeApi {
     String metadata,
   ) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         bridgeAddress,
         znnZts,
         BigInt.zero,
@@ -337,8 +316,6 @@ class BridgeApi {
     String metadata,
   ) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         bridgeAddress,
         znnZts,
         BigInt.zero,
@@ -356,8 +333,6 @@ class BridgeApi {
     String tokenAddress,
   ) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         bridgeAddress,
         znnZts,
         BigInt.zero,
@@ -370,25 +345,17 @@ class BridgeApi {
   }
 
   AccountBlockTemplate unhalt() {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        bridgeAddress, znnZts, BigInt.zero,
+    return AccountBlockTemplate.callContract(bridgeAddress, znnZts, BigInt.zero,
         Definitions.bridge.encodeFunction('Unhalt', []));
   }
 
   AccountBlockTemplate emergency() {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        bridgeAddress, znnZts, BigInt.zero,
+    return AccountBlockTemplate.callContract(bridgeAddress, znnZts, BigInt.zero,
         Definitions.bridge.encodeFunction('Emergency', []));
   }
 
   AccountBlockTemplate changeAdministrator(Address administrator) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         bridgeAddress,
         znnZts,
         BigInt.zero,
@@ -397,25 +364,17 @@ class BridgeApi {
   }
 
   AccountBlockTemplate setAllowKeyGen(bool allowKeyGen) {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        bridgeAddress, znnZts, BigInt.zero,
+    return AccountBlockTemplate.callContract(bridgeAddress, znnZts, BigInt.zero,
         Definitions.bridge.encodeFunction('SetAllowKeyGen', [allowKeyGen]));
   }
 
   AccountBlockTemplate setBridgeMetadata(String metadata) {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        bridgeAddress, znnZts, BigInt.zero,
+    return AccountBlockTemplate.callContract(bridgeAddress, znnZts, BigInt.zero,
         Definitions.bridge.encodeFunction('SetBridgeMetadata', [metadata]));
   }
 
   AccountBlockTemplate revokeUnwrapRequest(Hash transactionHash, int logIndex) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         bridgeAddress,
         znnZts,
         BigInt.zero,
@@ -424,10 +383,7 @@ class BridgeApi {
   }
 
   AccountBlockTemplate nominateGuardians(List<Address> guardians) {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        bridgeAddress, znnZts, BigInt.zero,
+    return AccountBlockTemplate.callContract(bridgeAddress, znnZts, BigInt.zero,
         Definitions.bridge.encodeFunction('NominateGuardians', [guardians]));
   }
 
@@ -438,8 +394,6 @@ class BridgeApi {
     int estimatedMomentumTime,
   ) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         bridgeAddress,
         znnZts,
         BigInt.zero,

@@ -26,8 +26,6 @@ class HtlcApi {
   AccountBlockTemplate create(Token token, BigInt amount, Address hashLocked,
       int expirationTime, int hashType, int keyMaxSize, List<int>? hashLock) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         htlcAddress,
         token.tokenStandard,
         amount,
@@ -36,34 +34,22 @@ class HtlcApi {
   }
 
   AccountBlockTemplate reclaim(Hash id) {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        htlcAddress, znnZts, BigInt.zero,
+    return AccountBlockTemplate.callContract(htlcAddress, znnZts, BigInt.zero,
         Definitions.htlc.encodeFunction('Reclaim', [id.getBytes()]));
   }
 
   AccountBlockTemplate unlock(Hash id, List<int>? preimage) {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        htlcAddress, znnZts, BigInt.zero,
+    return AccountBlockTemplate.callContract(htlcAddress, znnZts, BigInt.zero,
         Definitions.htlc.encodeFunction('Unlock', [id.getBytes(), preimage]));
   }
 
   AccountBlockTemplate denyProxyUnlock() {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        htlcAddress, znnZts, BigInt.zero,
+    return AccountBlockTemplate.callContract(htlcAddress, znnZts, BigInt.zero,
         Definitions.htlc.encodeFunction('DenyProxyUnlock', []));
   }
 
   AccountBlockTemplate allowProxyUnlock() {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        htlcAddress, znnZts, BigInt.zero,
+    return AccountBlockTemplate.callContract(htlcAddress, znnZts, BigInt.zero,
         Definitions.htlc.encodeFunction('AllowProxyUnlock', []));
   }
 }

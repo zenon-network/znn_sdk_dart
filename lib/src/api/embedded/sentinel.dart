@@ -50,8 +50,6 @@ class SentinelApi {
   // Contract methods
   AccountBlockTemplate register() {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         sentinelAddress,
         znnZts,
         sentinelRegisterZnnAmount,
@@ -59,35 +57,23 @@ class SentinelApi {
   }
 
   AccountBlockTemplate revoke() {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        sentinelAddress, znnZts,
+    return AccountBlockTemplate.callContract(sentinelAddress, znnZts,
         BigInt.zero, Definitions.sentinel.encodeFunction('Revoke', []));
   }
 
   // Common contract methods
   AccountBlockTemplate collectReward() {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        sentinelAddress, znnZts,
+    return AccountBlockTemplate.callContract(sentinelAddress, znnZts,
         BigInt.zero, Definitions.common.encodeFunction('CollectReward', []));
   }
 
   AccountBlockTemplate depositQsr(BigInt amount) {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        sentinelAddress, qsrZts, amount,
+    return AccountBlockTemplate.callContract(sentinelAddress, qsrZts, amount,
         Definitions.common.encodeFunction('DepositQsr', []));
   }
 
   AccountBlockTemplate withdrawQsr() {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        sentinelAddress, znnZts,
+    return AccountBlockTemplate.callContract(sentinelAddress, znnZts,
         BigInt.zero, Definitions.common.encodeFunction('WithdrawQsr', []));
   }
 }

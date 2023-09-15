@@ -29,7 +29,7 @@ class BlockUtils {
   }
 
   static List<int> getTransactionBytes(AccountBlockTemplate transaction) {
-    var versionBytes = BytesUtils.longToBytes(transaction.protocolVersion);
+    var versionBytes = BytesUtils.longToBytes(transaction.version);
     var chainIdentifierBytes =
         BytesUtils.longToBytes(transaction.chainIdentifier);
     var blockTypeBytes = BytesUtils.longToBytes(transaction.blockType);
@@ -74,10 +74,11 @@ class BlockUtils {
         [transaction.address.getBytes(), transaction.previousHash.getBytes()]));
   }
 
-  static Future<void> _autofillTransactionParameters(Zenon zdk,
+  static Future<void> _autofillTransactionParameters(
       AccountBlockTemplate accountBlockTemplate) async {
+    var z = Zenon();
     var frontierAccountBlock =
-        await zdk.ledger.getFrontierAccountBlock(accountBlockTemplate.address);
+        await z.ledger.getFrontierAccountBlock(accountBlockTemplate.address);
 
     var height = 1;
     Hash? previousHash = emptyHash;
@@ -89,19 +90,20 @@ class BlockUtils {
     accountBlockTemplate.height = height;
     accountBlockTemplate.previousHash = previousHash;
 
-    var frontierMomentum = await zdk.ledger.getFrontierMomentum();
+    var frontierMomentum = await z.ledger.getFrontierMomentum();
     var momentumAcknowledged =
         HashHeight(frontierMomentum.hash, frontierMomentum.height);
     accountBlockTemplate.momentumAcknowledged = momentumAcknowledged;
   }
 
-  static Future<bool> _checkAndSetFields(Zenon zdk,
-      AccountBlockTemplate transaction, WalletAccount wallet) async {
+  static Future<bool> _checkAndSetFields(
+      AccountBlockTemplate transaction, WalletAccount currentKeyPair) async {
+    var z = Zenon();
 
-    transaction.address = await wallet.getAddress();
-    transaction.publicKey = await wallet.getPublicKey();
+    transaction.address = await currentKeyPair.getAddress();
+    transaction.publicKey = await currentKeyPair.getPublicKey();
 
-    await _autofillTransactionParameters(zdk, transaction);
+    await _autofillTransactionParameters(transaction);
 
     if (BlockUtils.isSendBlock(transaction.blockType)) {
     } else {
@@ -110,7 +112,7 @@ class BlockUtils {
       }
 
       var sendBlock =
-          await zdk.ledger.getAccountBlockByHash(transaction.fromBlockHash);
+          await z.ledger.getAccountBlockByHash(transaction.fromBlockHash);
       if (sendBlock == null) {
         throw Error();
       }
@@ -129,10 +131,10 @@ class BlockUtils {
     return true;
   }
 
-  static Future<bool> _setDifficulty(Zenon zdk,
-      AccountBlockTemplate transaction,
+  static Future<bool> _setDifficulty(AccountBlockTemplate transaction,
       {void Function(PowStatus)? generatingPowCallback,
       waitForRequiredPlasma = false}) async {
+    var z = Zenon();
     var powParam = GetRequiredParam(
         address: transaction.address,
         blockType: transaction.blockType,
@@ -140,7 +142,7 @@ class BlockUtils {
         data: transaction.data);
 
     var response =
-        await zdk.embedded.plasma.getRequiredPoWForAccountBlock(powParam);
+        await z.embedded.plasma.getRequiredPoWForAccountBlock(powParam);
 
     if (response.requiredDifficulty != 0) {
       transaction.fusedPlasma = response.availablePlasma;
@@ -160,30 +162,34 @@ class BlockUtils {
   }
 
   static Future<bool> _setHashAndSignature(
-      AccountBlockTemplate transaction, WalletAccount account) async {
+      AccountBlockTemplate transaction, WalletAccount currentKeyPair) async {
     transaction.hash = getTransactionHash(transaction);
-    transaction.signature = await account.signTx(transaction);
+    transaction.signature = await currentKeyPair.signTx(transaction);
     return true;
   }
 
-  static Future<AccountBlockTemplate> send(Zenon zdk,
-      AccountBlockTemplate transaction, WalletAccount account,
+  static Future<AccountBlockTemplate> send(
+      AccountBlockTemplate transaction, WalletAccount currentKeyPair,
       {void Function(PowStatus)? generatingPowCallback,
       waitForRequiredPlasma = false}) async {
-    await _checkAndSetFields(zdk, transaction, account);
-    await _setDifficulty(zdk, transaction,
+    var z = Zenon();
+
+    await _checkAndSetFields(transaction, currentKeyPair);
+    await _setDifficulty(transaction,
         generatingPowCallback: generatingPowCallback,
         waitForRequiredPlasma: waitForRequiredPlasma);
-    await _setHashAndSignature(transaction, account);
-    await zdk.ledger.publishRawTransaction(transaction);
+    await _setHashAndSignature(transaction, currentKeyPair);
+    await z.ledger.publishRawTransaction(transaction);
 
     logger.info('Published account-block');
     return transaction;
   }
 
-  static Future<bool> requiresPoW(Zenon zdk, AccountBlockTemplate transaction,
-      {WalletAccount? account}) async {
-    transaction.address = await account!.getAddress();
+  static Future<bool> requiresPoW(AccountBlockTemplate transaction,
+      {WalletAccount? blockSigningKey}) async {
+    var z = Zenon();
+
+    transaction.address = await blockSigningKey!.getAddress();
     var powParam = GetRequiredParam(
         address: transaction.address,
         blockType: transaction.blockType,
@@ -191,7 +197,7 @@ class BlockUtils {
         data: transaction.data);
 
     var response =
-        await zdk.embedded.plasma.getRequiredPoWForAccountBlock(powParam);
+        await z.embedded.plasma.getRequiredPoWForAccountBlock(powParam);
     if (response.requiredDifficulty == 0) {
       return false;
     }

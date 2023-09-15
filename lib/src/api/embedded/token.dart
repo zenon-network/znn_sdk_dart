@@ -46,8 +46,6 @@ class TokenApi {
       bool burnable,
       bool utility) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         tokenAddress,
         znnZts,
         tokenZtsIssueFeeInZnn,
@@ -67,8 +65,6 @@ class TokenApi {
   AccountBlockTemplate mintToken(
       TokenStandard tokenStandard, BigInt amount, Address receiveAddress) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         tokenAddress,
         znnZts,
         BigInt.zero,
@@ -77,18 +73,13 @@ class TokenApi {
   }
 
   AccountBlockTemplate burnToken(TokenStandard tokenStandard, BigInt amount) {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        tokenAddress, tokenStandard,
+    return AccountBlockTemplate.callContract(tokenAddress, tokenStandard,
         amount, Definitions.token.encodeFunction('Burn', []));
   }
 
   AccountBlockTemplate updateToken(TokenStandard tokenStandard, Address owner,
       bool isMintable, bool isBurnable) {
     return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
         tokenAddress,
         znnZts,
         BigInt.zero,

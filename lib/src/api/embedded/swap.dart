@@ -37,10 +37,7 @@ class SwapApi {
 
   // Contract methods
   AccountBlockTemplate retrieveAssets(String pubKey, String signature) {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        swapAddress, znnZts, BigInt.zero,
+    return AccountBlockTemplate.callContract(swapAddress, znnZts, BigInt.zero,
         Definitions.swap.encodeFunction('RetrieveAssets', [pubKey, signature]));
   }
 

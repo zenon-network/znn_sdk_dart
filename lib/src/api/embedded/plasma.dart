@@ -45,18 +45,12 @@ class PlasmaApi {
 
   // Contract methods
   AccountBlockTemplate fuse(Address beneficiary, BigInt amount) {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        plasmaAddress, qsrZts, amount,
+    return AccountBlockTemplate.callContract(plasmaAddress, qsrZts, amount,
         Definitions.plasma.encodeFunction('Fuse', [beneficiary]));
   }
 
   AccountBlockTemplate cancel(Hash id) {
-    return AccountBlockTemplate.callContract(
-        client.protocolVersion,
-        client.chainIdentifier,
-        plasmaAddress, znnZts, BigInt.zero,
+    return AccountBlockTemplate.callContract(plasmaAddress, znnZts, BigInt.zero,
         Definitions.plasma.encodeFunction('CancelFuse', [id.getBytes()]));
   }
 }
