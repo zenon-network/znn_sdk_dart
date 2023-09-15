@@ -39,7 +39,7 @@ class WsClient implements Client {
   Stream<bool> get restartedStream =>
       restartedStreamController.stream.asBroadcastStream();
 
-  WsClient(WsClientOptions? options)
+  WsClient([WsClientOptions? options])
       : _version = options == null ? 1 : options.protocolVersion,
         _chainId = options == null ? chainId : options.chainIdentifier,
         _websocketIntendedState = WebsocketStatus.uninitialized,
