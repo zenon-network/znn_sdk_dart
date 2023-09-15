@@ -58,8 +58,8 @@ class AccountBlock extends AccountBlockTemplate {
     final data = super.toJson();
     data['descendantBlocks'] =
         descendantBlocks.map((block) => block.toJson()).toList();
-    data['usedPlasma'] = usedPlasma.toString();
-    data['basePlasma'] = basePlasma.toString();
+    data['usedPlasma'] = usedPlasma;
+    data['basePlasma'] = basePlasma;
     data['changesHash'] = changesHash.toString();
 
     data['token'] = token != null ? token!.toJson() : null;

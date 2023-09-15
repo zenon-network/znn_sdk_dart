@@ -168,7 +168,8 @@ void main() async {
   }
 }''';
 
-  var sendAccountBlock = AccountBlock.fromJson(jsonDecode(sendAccountBlockString));
+  var sendAccountBlock =
+      AccountBlock.fromJson(jsonDecode(sendAccountBlockString));
   test('same send json', () {
     expect(sendAccountBlock.toJson(), jsonDecode(sendAccountBlockString));
   });
@@ -177,7 +178,8 @@ void main() async {
         '3835082b4afb76971d58d6ad510e7e91f3bb0d41912fac4ec4cfef7bd7bbea73');
   });
 
-  var receiveAccountBlock = AccountBlock.fromJson(jsonDecode(receiveAccountBlockString));
+  var receiveAccountBlock =
+      AccountBlock.fromJson(jsonDecode(receiveAccountBlockString));
   test('same receive json', () {
     expect(receiveAccountBlock.toJson(), jsonDecode(receiveAccountBlockString));
   });

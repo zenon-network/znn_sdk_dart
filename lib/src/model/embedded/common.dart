@@ -76,3 +76,73 @@ class PillarVote {
   Map<String, dynamic> toJson() =>
       {'id': id.toString(), 'name': name, 'vote': vote};
 }
+
+class SecurityInfo {
+  List<Address> guardians;
+  List<Address> guardiansVotes;
+  int administratorDelay;
+  int softDelay;
+
+  SecurityInfo.fromJson(Map<String, dynamic> json)
+      : guardians = (json['guardians'] as List)
+            .map((entry) => Address.parse(entry))
+            .toList(),
+        guardiansVotes = (json['guardiansVotes'] as List)
+            .map((entry) => Address.parse(entry))
+            .toList(),
+        administratorDelay = json['administratorDelay'],
+        softDelay = json['softDelay'];
+
+  Map<String, dynamic> toJson() => {
+        'guardians': guardians.map((v) => v.toString()).toList(),
+        'guardiansVotes': guardiansVotes.map((v) => v.toString()).toList(),
+        'administratorDelay': administratorDelay,
+        'softDelay': softDelay,
+      };
+}
+
+class RewardDeposit {
+  Address address;
+  BigInt znnAmount;
+  BigInt qsrAmount;
+
+  RewardDeposit({
+    required this.address,
+    required this.znnAmount,
+    required this.qsrAmount,
+  });
+
+  RewardDeposit.fromJson(Map<String, dynamic> json)
+      : address = Address.parse(json['address']),
+        znnAmount = BigInt.parse(json['znnAmount']),
+        qsrAmount = BigInt.parse(json['qsrAmount']);
+
+  Map<String, dynamic> toJson() => {
+        'address': address.toString(),
+        'znnAmount': znnAmount.toString(),
+        'qsrAmount': qsrAmount.toString(),
+      };
+}
+
+class TimeChallengeInfo {
+  String methodName;
+  Hash paramsHash;
+  int challengeStartHeight;
+
+  TimeChallengeInfo({
+    required this.methodName,
+    required this.paramsHash,
+    required this.challengeStartHeight,
+  });
+
+  TimeChallengeInfo.fromJson(Map<String, dynamic> json)
+      : methodName = json['MethodName'],
+        paramsHash = Hash.parse(json['ParamsHash']),
+        challengeStartHeight = json['ChallengeStartHeight'];
+
+  Map<String, dynamic> toJson() => {
+        'MethodName': methodName,
+        'ParamsHash': paramsHash.toString(),
+        'ChallengeStartHeight': challengeStartHeight,
+      };
+}

@@ -94,8 +94,8 @@ abstract class ArrayType extends AbiType {
         elems[i] = IntType.encodeInt(offset);
         List<int> encoded = elementType.encode(l[i]);
         elems[l.length + i] = encoded;
-        offset += (AbiType.int32Size *
-            ((encoded.length - 1) / AbiType.int32Size + 1)) as int;
+        offset +=
+            (AbiType.int32Size * (encoded.length / AbiType.int32Size)).toInt();
       }
     } else {
       elems = List<List<int>>.filled(l.length, [], growable: true);
@@ -221,7 +221,7 @@ class BytesType extends AbiType {
       throw Error();
     }
     var ret = List<int>.filled(
-        ((((bb.length - 1) ~/ AbiType.int32Size) + 1) * AbiType.int32Size)
+        bb.isEmpty ? 0 : ((((bb.length - 1) ~/ AbiType.int32Size) + 1) * AbiType.int32Size)
             .toInt(),
         0,
         growable: true);
@@ -325,7 +325,7 @@ class HashType extends AbiType {
   dynamic decode(List<int> encoded, [int offset = 0]) {
     var l = List.filled(AbiType.int32Size, 0, growable: true);
     BytesUtils.arraycopy(encoded, offset, l, 0, getFixedSize());
-    return Hash.digest(l);
+    return Hash.fromBytes(l);
   }
 }
 

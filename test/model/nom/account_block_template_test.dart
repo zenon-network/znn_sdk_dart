@@ -27,12 +27,15 @@ void main() async {
   "publicKey": "GYyn77OXTL31zPbDBCe/eKir+VCF3hv+LxiOUF3XcJY=",
   "signature": "hrQwfpdEYTjoLV9yzEppeky2Y/9T1x760vQPL6NLgD+cn0XD1+F/dOcSwyhg8RxjHWMN6MvD2NnTAX7N+5aCBQ=="
 }''';
-  var accountBlockTemplate = AccountBlockTemplate.fromJson(jsonDecode(accountBlockTemplateString));
+  var accountBlockTemplate =
+      AccountBlockTemplate.fromJson(jsonDecode(accountBlockTemplateString));
 
   test('same json', () {
-    expect(accountBlockTemplate.toJson(), jsonDecode(accountBlockTemplateString));
+    expect(
+        accountBlockTemplate.toJson(), jsonDecode(accountBlockTemplateString));
   });
   test('same hash', () {
-    expect(BlockUtils.getTransactionHash(accountBlockTemplate).toString(), '3835082b4afb76971d58d6ad510e7e91f3bb0d41912fac4ec4cfef7bd7bbea73');
+    expect(BlockUtils.getTransactionHash(accountBlockTemplate).toString(),
+        '3835082b4afb76971d58d6ad510e7e91f3bb0d41912fac4ec4cfef7bd7bbea73');
   });
 }
