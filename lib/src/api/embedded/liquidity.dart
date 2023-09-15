@@ -58,6 +58,8 @@ class LiquidityApi {
   AccountBlockTemplate liquidityStake(
       int durationInSec, BigInt amount, TokenStandard zts) {
     return AccountBlockTemplate.callContract(
+        client.protocolVersion,
+        client.chainIdentifier,
         liquidityAddress,
         zts,
         amount,
@@ -67,6 +69,8 @@ class LiquidityApi {
 
   AccountBlockTemplate cancelLiquidityStake(Hash id) {
     return AccountBlockTemplate.callContract(
+        client.protocolVersion,
+        client.chainIdentifier,
         liquidityAddress,
         znnZts,
         BigInt.zero,
@@ -76,6 +80,8 @@ class LiquidityApi {
 
   AccountBlockTemplate unlockLiquidityStakeEntries(TokenStandard zts) {
     return AccountBlockTemplate.callContract(
+        client.protocolVersion,
+        client.chainIdentifier,
         liquidityAddress,
         zts,
         BigInt.zero,
@@ -90,6 +96,8 @@ class LiquidityApi {
       List<int> qsrPercentages,
       List<BigInt> minAmounts) {
     return AccountBlockTemplate.callContract(
+        client.protocolVersion,
+        client.chainIdentifier,
         liquidityAddress,
         znnZts,
         BigInt.zero,
@@ -99,6 +107,8 @@ class LiquidityApi {
 
   AccountBlockTemplate nominateGuardians(List<Address> guardians) {
     return AccountBlockTemplate.callContract(
+        client.protocolVersion,
+        client.chainIdentifier,
         liquidityAddress,
         znnZts,
         BigInt.zero,
@@ -107,6 +117,8 @@ class LiquidityApi {
 
   AccountBlockTemplate proposeAdministrator(Address address) {
     return AccountBlockTemplate.callContract(
+        client.protocolVersion,
+        client.chainIdentifier,
         liquidityAddress,
         znnZts,
         BigInt.zero,
@@ -116,6 +128,8 @@ class LiquidityApi {
 
   AccountBlockTemplate setIsHalted(bool isHalted) {
     return AccountBlockTemplate.callContract(
+        client.protocolVersion,
+        client.chainIdentifier,
         liquidityAddress,
         znnZts,
         BigInt.zero,
@@ -124,6 +138,8 @@ class LiquidityApi {
 
   AccountBlockTemplate setAdditionalReward(int znnReward, int qsrReward) {
     return AccountBlockTemplate.callContract(
+        client.protocolVersion,
+        client.chainIdentifier,
         liquidityAddress,
         znnZts,
         BigInt.zero,
@@ -133,6 +149,8 @@ class LiquidityApi {
 
   AccountBlockTemplate changeAdministrator(Address administrator) {
     return AccountBlockTemplate.callContract(
+        client.protocolVersion,
+        client.chainIdentifier,
         liquidityAddress,
         znnZts,
         BigInt.zero,
@@ -142,13 +160,19 @@ class LiquidityApi {
 
   // Common contract methods
   AccountBlockTemplate collectReward() {
-    return AccountBlockTemplate.callContract(liquidityAddress, znnZts,
+    return AccountBlockTemplate.callContract(
+        client.protocolVersion,
+        client.chainIdentifier,
+        liquidityAddress, znnZts,
         BigInt.zero, Definitions.liquidity.encodeFunction('CollectReward', []));
   }
 
   // Administrator common contract methods
   AccountBlockTemplate emergency() {
-    return AccountBlockTemplate.callContract(liquidityAddress, znnZts,
+    return AccountBlockTemplate.callContract(
+        client.protocolVersion,
+        client.chainIdentifier,
+        liquidityAddress, znnZts,
         BigInt.zero, Definitions.liquidity.encodeFunction('Emergency', []));
   }
 }

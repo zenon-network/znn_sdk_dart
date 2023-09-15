@@ -6,6 +6,9 @@ abstract class WalletDefinition
 {
   // Gets the id or path of the wallet.
   String get walletId;
+
+  // Gets the name of the wallet.
+  String get walletName;
 }
 
 // Represents the options for retrieving a wallet.

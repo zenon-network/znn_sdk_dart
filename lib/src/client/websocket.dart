@@ -12,9 +12,17 @@ enum WebsocketStatus { uninitialized, connecting, running, stopped }
 typedef ConnectionEstablishedCallback = void Function(
     Stream<Map<String, dynamic>?> allResponseBroadcaster);
 
+class WsClientOptions {
+  final int protocolVersion;
+  final int chainIdentifier;
+  WsClientOptions(this.protocolVersion, this.chainIdentifier);
+}
+
 class WsClient implements Client {
   jsonrpc2.Client? _wsRpc2Client;
 
+  final int _version;
+  final int _chainId;
   final List<ConnectionEstablishedCallback> _onConnectionCallbacks;
 
   Stream<Map<String, dynamic>?>? _wsResponseBroadcaster;
@@ -31,9 +39,19 @@ class WsClient implements Client {
   Stream<bool> get restartedStream =>
       restartedStreamController.stream.asBroadcastStream();
 
-  WsClient()
-      : _websocketIntendedState = WebsocketStatus.uninitialized,
+  WsClient(WsClientOptions? options)
+      : _version = options == null ? 1 : options.protocolVersion,
+        _chainId = options == null ? chainId : options.chainIdentifier,
+        _websocketIntendedState = WebsocketStatus.uninitialized,
         _onConnectionCallbacks = List.empty(growable: true);
+
+  int get protocolVersion {
+    return _version;
+  }
+
+  int get chainIdentifier {
+    return _chainId;
+  }
 
   bool isClosed() {
     if (_wsRpc2Client != null) {

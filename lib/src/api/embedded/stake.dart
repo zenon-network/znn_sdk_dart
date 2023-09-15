@@ -40,18 +40,27 @@ class StakeApi {
 
   // Contract methods
   AccountBlockTemplate stake(int durationInSec, BigInt amount) {
-    return AccountBlockTemplate.callContract(stakeAddress, znnZts, amount,
+    return AccountBlockTemplate.callContract(
+        client.protocolVersion,
+        client.chainIdentifier,
+        stakeAddress, znnZts, amount,
         Definitions.stake.encodeFunction('Stake', [durationInSec.toString()]));
   }
 
   AccountBlockTemplate cancel(Hash id) {
-    return AccountBlockTemplate.callContract(stakeAddress, znnZts, BigInt.zero,
+    return AccountBlockTemplate.callContract(
+        client.protocolVersion,
+        client.chainIdentifier,
+        stakeAddress, znnZts, BigInt.zero,
         Definitions.stake.encodeFunction('Cancel', [id.getBytes()]));
   }
 
   // Common contract methods
   AccountBlockTemplate collectReward() {
-    return AccountBlockTemplate.callContract(stakeAddress, znnZts, BigInt.zero,
+    return AccountBlockTemplate.callContract(
+        client.protocolVersion,
+        client.chainIdentifier,
+        stakeAddress, znnZts, BigInt.zero,
         Definitions.common.encodeFunction('CollectReward', []));
   }
 }

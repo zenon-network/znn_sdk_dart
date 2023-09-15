@@ -12,7 +12,7 @@ import 'package:znn_sdk_dart/src/wallet/exceptions.dart';
 import 'package:znn_sdk_dart/src/wallet/interfaces.dart';
 
 class KeyStoreDefinition implements WalletDefinition {
-  File file;
+  final File file;
 
   KeyStoreDefinition({required this.file}) {
     if (!file.existsSync()) {
