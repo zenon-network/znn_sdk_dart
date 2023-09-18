@@ -15,7 +15,9 @@ class NetworkInfo {
   NetworkInfo.fromJson(Map<String, dynamic> json)
       : numPeers = json['numPeers'],
         self = Peer.fromJson(json['self']),
-        peers = (List<Map<String, dynamic>>.from(json['peers'])).map((f) => Peer.fromJson(f)).toList();
+        peers = (List<Map<String, dynamic>>.from(json['peers']))
+            .map((f) => Peer.fromJson(f))
+            .toList();
 }
 
 class ProcessInfo {
@@ -30,6 +32,7 @@ class ProcessInfo {
 class OsInfo {
   String os;
   String platform;
+  String platformFamily;
   String platformVersion;
   String kernelVersion;
   int memoryTotal;
@@ -41,6 +44,7 @@ class OsInfo {
       : os = json['os'],
         platform = json['platform'],
         platformVersion = json['platform'],
+        platformFamily = json['platformFamily'],
         kernelVersion = json['kernelVersion'],
         memoryTotal = json['memoryTotal'],
         memoryFree = json['memoryFree'],
