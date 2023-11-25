@@ -2,8 +2,7 @@ import 'package:znn_sdk_dart/src/model/primitives.dart';
 import 'package:znn_sdk_dart/src/model/nom/account_block_template.dart';
 
 // Represents the definition of a wallet.
-abstract class WalletDefinition
-{
+abstract class WalletDefinition {
   // Gets the id or path of the wallet.
   String get walletId;
 
@@ -12,17 +11,16 @@ abstract class WalletDefinition
 }
 
 // Represents the options for retrieving a wallet.
-abstract class WalletOptions
-{ }
+abstract class WalletOptions {}
 
 // Represents the wallet manager for interacting with wallets.
-abstract class WalletManager
-{
+abstract class WalletManager {
   // Gets the definition of wallets
   Future<Iterable<WalletDefinition>> getWalletDefinitions();
 
   // Gets a wallet by wallet definition.
-  Future<Wallet> getWallet(WalletDefinition walletDefinition, WalletOptions options);
+  Future<Wallet> getWallet(WalletDefinition walletDefinition,
+      WalletOptions? options);
 
   // Determines whether or not the manager supports the given wallet definition.
   // Returns true if the wallet is supported; otherwise false.
@@ -30,15 +28,13 @@ abstract class WalletManager
 }
 
 // Represents a wallet.
-abstract class Wallet
-{
+abstract class Wallet {
   // Gets a wallet account by index.
   Future<WalletAccount> getAccount([int index = 0]);
 }
 
 // Represents the account of a wallet.
-abstract class WalletAccount
-{
+abstract class WalletAccount {
   // Gets the public key of the wallet account as an array of bytes.
   Future<List<int>> getPublicKey();
 
