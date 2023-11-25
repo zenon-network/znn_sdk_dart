@@ -30,10 +30,10 @@ void saveKeyStoreFunction(SaveKeyStoreArguments args) async {
 }
 
 class KeyStoreManager implements WalletManager {
-  Directory? walletPath;
+  final Directory walletPath;
   KeyStore? keyStoreInUse;
 
-  KeyStoreManager({this.walletPath});
+  KeyStoreManager({required this.walletPath});
 
   Future<KeyStoreDefinition> saveKeyStore(KeyStore store, String password,
       {String? name}) async {
@@ -53,7 +53,7 @@ class KeyStoreManager implements WalletManager {
       if (data != null) {
         if (data is String) {
           logger.info(data);
-          var location = File(path.join(walletPath!.path, name));
+          var location = File(path.join(walletPath.path, name));
           await location.writeAsString(data);
           completer.complete(KeyStoreDefinition(file: location));
         } else {
@@ -91,7 +91,7 @@ class KeyStoreManager implements WalletManager {
   }
 
   Future<KeyStoreDefinition?> findKeyStore(String name) async {
-    for (var file in walletPath!.listSync()) {
+    for (var file in walletPath.listSync()) {
       if (path.basename(file.path) == name) {
         if (file is File) {
           return KeyStoreDefinition(file: file);
@@ -105,7 +105,7 @@ class KeyStoreManager implements WalletManager {
 
   Future<List<KeyStoreDefinition>> listAllKeyStores() async {
     var keyStoreList = <KeyStoreDefinition>[];
-    for (var keyStore in walletPath!.listSync()) {
+    for (var keyStore in walletPath.listSync()) {
       if (keyStore is File) {
         keyStoreList.add(KeyStoreDefinition(file: keyStore));
       }
