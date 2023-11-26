@@ -20,7 +20,7 @@ abstract class WalletManager {
 
   // Gets a wallet by wallet definition.
   Future<Wallet> getWallet(WalletDefinition walletDefinition,
-      WalletOptions? options);
+      [WalletOptions? options]);
 
   // Determines whether or not the manager supports the given wallet definition.
   // Returns true if the wallet is supported; otherwise false.
