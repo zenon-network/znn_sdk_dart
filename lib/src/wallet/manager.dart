@@ -130,7 +130,7 @@ class KeyStoreManager implements WalletManager {
   }
 
   Future<Wallet> getWallet(WalletDefinition walletDefinition,
-      WalletOptions? walletOptions) async {
+      [WalletOptions? walletOptions]) async {
     if (!(walletDefinition is KeyStoreDefinition)) {
       throw Exception(
           "Unsupported wallet definition ${walletDefinition.runtimeType}.");
