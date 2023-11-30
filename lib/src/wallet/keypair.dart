@@ -4,7 +4,7 @@ import 'package:znn_sdk_dart/src/crypto/crypto.dart';
 import 'package:znn_sdk_dart/src/model/primitives.dart';
 import 'package:znn_sdk_dart/src/wallet/interfaces.dart';
 import 'package:znn_sdk_dart/src/model/nom/account_block_template.dart';
-
+import 'package:znn_sdk_dart/src/utils/block.dart';
 class KeyPair implements WalletAccount {
   List<int>? privateKey;
   List<int>? publicKey;
@@ -42,8 +42,7 @@ class KeyPair implements WalletAccount {
   }
 
   Future<List<int>> signTx(AccountBlockTemplate tx) async {
-    return Crypto.sign(
-        Crypto.digest(tx.hash.getBytes()!), privateKey, (await getPublicKey()));
+    return Crypto.sign(tx.hash.getBytes()!, privateKey, (await getPublicKey()));
   }
 
   Future<bool> verify(List<int> signature, List<int> message) async {
