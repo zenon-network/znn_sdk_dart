@@ -7,7 +7,7 @@ import 'package:znn_sdk_dart/src/model/primitives/hash.dart';
 import 'package:znn_sdk_dart/src/model/primitives/hash_height.dart';
 import 'package:znn_sdk_dart/src/pow/pow.dart';
 import 'package:znn_sdk_dart/src/utils/utils.dart';
-import 'package:znn_sdk_dart/src/wallet/keypair.dart';
+import 'package:znn_sdk_dart/src/wallet/interfaces.dart';
 import 'package:znn_sdk_dart/src/zenon.dart';
 
 class BlockUtils {
@@ -25,6 +25,10 @@ class BlockUtils {
   }
 
   static Hash getTransactionHash(AccountBlockTemplate transaction) {
+    return Hash.digest(getTransactionBytes(transaction));
+  }
+
+  static List<int> getTransactionBytes(AccountBlockTemplate transaction) {
     var versionBytes = BytesUtils.longToBytes(transaction.version);
     var chainIdentifierBytes =
         BytesUtils.longToBytes(transaction.chainIdentifier);
@@ -62,12 +66,7 @@ class BlockUtils {
       nonceBytes
     ]);
 
-    return Hash.digest(source);
-  }
-
-  static Future<List<int>> _getTransactionSignature(
-      KeyPair keyPair, AccountBlockTemplate transaction) {
-    return keyPair.sign(transaction.hash.getBytes()!);
+    return source;
   }
 
   static Hash _getPoWData(AccountBlockTemplate transaction) {
@@ -98,11 +97,11 @@ class BlockUtils {
   }
 
   static Future<bool> _checkAndSetFields(
-      AccountBlockTemplate transaction, KeyPair currentKeyPair) async {
+      AccountBlockTemplate transaction, WalletAccount currentKeyPair) async {
     var z = Zenon();
 
-    transaction.address = (await currentKeyPair.address)!;
-    transaction.publicKey = (await currentKeyPair.getPublicKey());
+    transaction.address = await currentKeyPair.getAddress();
+    transaction.publicKey = await currentKeyPair.getPublicKey();
 
     await _autofillTransactionParameters(transaction);
 
@@ -149,10 +148,10 @@ class BlockUtils {
       transaction.fusedPlasma = response.availablePlasma;
       transaction.difficulty = response.requiredDifficulty.toInt();
       logger.info(
-          'Generating Plasma for block: hash=${BlockUtils._getPoWData(transaction)}');
+          'Generating Plasma for block: hash=${_getPoWData(transaction)}');
       generatingPowCallback?.call(PowStatus.generating);
       transaction.nonce = await generatePoW(
-          BlockUtils._getPoWData(transaction), transaction.difficulty);
+          _getPoWData(transaction), transaction.difficulty);
       generatingPowCallback?.call(PowStatus.done);
     } else {
       transaction.fusedPlasma = response.basePlasma;
@@ -163,16 +162,14 @@ class BlockUtils {
   }
 
   static Future<bool> _setHashAndSignature(
-      AccountBlockTemplate transaction, KeyPair currentKeyPair) async {
-    transaction.hash = BlockUtils.getTransactionHash(transaction);
-    var transSig =
-        await BlockUtils._getTransactionSignature(currentKeyPair, transaction);
-    transaction.signature = transSig;
+      AccountBlockTemplate transaction, WalletAccount currentKeyPair) async {
+    transaction.hash = getTransactionHash(transaction);
+    transaction.signature = await currentKeyPair.signTx(transaction);
     return true;
   }
 
   static Future<AccountBlockTemplate> send(
-      AccountBlockTemplate transaction, KeyPair currentKeyPair,
+      AccountBlockTemplate transaction, WalletAccount currentKeyPair,
       {void Function(PowStatus)? generatingPowCallback,
       waitForRequiredPlasma = false}) async {
     var z = Zenon();
@@ -189,10 +186,10 @@ class BlockUtils {
   }
 
   static Future<bool> requiresPoW(AccountBlockTemplate transaction,
-      {KeyPair? blockSigningKey}) async {
+      {WalletAccount? blockSigningKey}) async {
     var z = Zenon();
 
-    transaction.address = (await blockSigningKey!.address)!;
+    transaction.address = await blockSigningKey!.getAddress();
     var powParam = GetRequiredParam(
         address: transaction.address,
         blockType: transaction.blockType,
