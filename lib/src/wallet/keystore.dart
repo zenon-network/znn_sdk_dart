@@ -16,7 +16,7 @@ class KeyStoreDefinition implements WalletDefinition {
 
   KeyStoreDefinition({required this.file}) {
     if (!file.existsSync()) {
-      throw InvalidKeyStorePath('Given keyStore does not exist ($file)');
+      throw InvalidWalletPath('Given keyStore does not exist ($file)');
     }
   }
 

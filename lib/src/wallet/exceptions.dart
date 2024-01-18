@@ -1,9 +1,9 @@
 import 'package:znn_sdk_dart/src/global.dart';
 
-class InvalidKeyStorePath implements Exception {
+class InvalidWalletPath implements Exception {
   String message;
 
-  InvalidKeyStorePath(this.message);
+  InvalidWalletPath(this.message);
 
   @override
   String toString() {
