@@ -5,24 +5,18 @@ import 'package:argon2_ffi_base/argon2_ffi_base.dart';
 import 'package:cryptography/cryptography.dart';
 import 'package:cryptography/cryptography.dart' as cryptography;
 import 'package:hex/hex.dart';
-import 'package:znn_sdk_dart/src/argon2/argon2.dart';
-import 'package:znn_sdk_dart/src/model/primitives.dart';
-import 'package:znn_sdk_dart/src/wallet/exceptions.dart';
-import 'package:znn_sdk_dart/src/wallet/keystore.dart';
+import 'package:znn_sdk_dart/znn_sdk_dart.dart';
 
-class KeyFile {
-  Address? baseAddress;
+class EncryptedFile {
   _Crypto? crypto;
   int? timestamp;
   int? version;
 
-  KeyFile({this.baseAddress, this.crypto, this.timestamp, this.version});
+  EncryptedFile({this.crypto, this.timestamp, this.version});
 
-  static Future<KeyFile> encrypt(KeyStore store, String password) async {
+  static Future<EncryptedFile> encrypt(List<int> data, String password) async {
     var timestamp = ((DateTime.now()).millisecondsSinceEpoch / 1000).round();
-
-    var stored = KeyFile(
-        baseAddress: await store.getKeyPair().address,
+    var stored = EncryptedFile(
         timestamp: timestamp,
         version: 1,
         crypto: _Crypto(
@@ -31,10 +25,10 @@ class KeyFile {
             cipherName: 'aes-256-gcm',
             kdf: 'argon2.IDKey',
             nonce: Uint8List(0)));
-    return stored._encryptEntropy(store, password);
+    return stored._encryptData(data, password);
   }
 
-  Future<KeyStore> decrypt(String password) async {
+  Future<List<int>> decrypt(String password) async {
     try {
       var key = initArgon2().argon2(Argon2Arguments(
           Uint8List.fromList(utf8.encode(password)),
@@ -46,7 +40,7 @@ class KeyFile {
           2,
           13));
       final algorithm = cryptography.AesGcm.with256bits();
-      var entropy = await algorithm.decrypt(
+      var data = await algorithm.decrypt(
           cryptography.SecretBox(
             crypto!.cipherData!.sublist(0, crypto!.cipherData!.length - 16),
             nonce: crypto!.nonce!,
@@ -56,7 +50,7 @@ class KeyFile {
           secretKey: cryptography.SecretKey(key),
           aad: utf8.encode('zenon'));
 
-      return KeyStore.fromEntropy(HEX.encode(entropy));
+      return data;
     } on SecretBoxAuthenticationError {
       throw IncorrectPasswordException();
     } catch (e) {
@@ -64,8 +58,7 @@ class KeyFile {
     }
   }
 
-  KeyFile.fromJson(Map<String, dynamic> json) {
-    baseAddress = Address.parse(json['baseAddress']);
+  EncryptedFile.fromJson(Map<String, dynamic> json) {
     crypto = json['crypto'] != null ? _Crypto.fromJson(json['crypto']) : null;
     timestamp = json['timestamp'];
     version = json['version'];
@@ -73,7 +66,6 @@ class KeyFile {
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
-    data['baseAddress'] = baseAddress.toString();
     if (crypto != null) {
       data['crypto'] = crypto!.toJson();
     }
@@ -87,7 +79,7 @@ class KeyFile {
     return toJson().toString();
   }
 
-  Future<KeyFile> _encryptEntropy(KeyStore store, String password) async {
+  Future<EncryptedFile> _encryptData(List<int> data, String password) async {
     var salt_1 = await cryptography.SecretKeyData.random(length: 16).extract();
     var salt = Uint8List.fromList(salt_1.bytes);
     var nonce_1 = await cryptography.SecretKeyData.random(length: 12).extract();
@@ -103,7 +95,7 @@ class KeyFile {
         13));
 
     final algorithm = cryptography.AesGcm.with256bits();
-    var encrypted = await algorithm.encrypt(HEX.decode(store.entropy),
+    var encrypted = await algorithm.encrypt(data,
         secretKey: cryptography.SecretKey(key),
         nonce: nonce,
         aad: utf8.encode('zenon'));
@@ -120,7 +112,7 @@ Uint8List _fromHexString(String s) {
 }
 
 String _toHexString(Uint8List l) {
-  return '0x' + HEX.encode(l);
+  return '0x${HEX.encode(l)}';
 }
 
 class _Crypto {
