@@ -33,7 +33,6 @@ void saveKeyStoreFunction(SaveKeyStoreArguments args) async {
 
 class KeyStoreManager implements WalletManager {
   final Directory walletPath;
-  KeyStore? keyStoreInUse;
 
   KeyStoreManager({required this.walletPath});
 
@@ -69,17 +68,6 @@ class KeyStoreManager implements WalletManager {
       }
     });
     return completer.future;
-  }
-
-  void setKeyStore(KeyStore keyStore) {
-    keyStoreInUse = keyStore;
-  }
-
-  String? getMnemonicInUse() {
-    if (keyStoreInUse == null) {
-      throw ArgumentError('The keyStore in use is null');
-    }
-    return keyStoreInUse!.mnemonic;
   }
 
   Future<KeyStore> readKeyStore(String password, File keyStoreFile) async {
