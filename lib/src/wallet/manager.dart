@@ -6,6 +6,7 @@ import 'dart:isolate';
 import 'package:hex/hex.dart';
 import 'package:path/path.dart' as path;
 import 'package:znn_sdk_dart/src/global.dart';
+import 'package:znn_sdk_dart/src/wallet/constants.dart';
 import 'package:znn_sdk_dart/src/wallet/exceptions.dart';
 import 'package:znn_sdk_dart/src/wallet/keystore.dart';
 import 'package:znn_sdk_dart/src/wallet/interfaces.dart';
@@ -26,8 +27,12 @@ class SaveKeyStoreArguments {
 }
 
 void saveKeyStoreFunction(SaveKeyStoreArguments args) async {
-  var encrypted =
-      await EncryptedFile.encrypt(HEX.decode(args.store.entropy), args.password);
+  var baseAddress = await (await args.store.getAccount()).getAddress();
+  var encrypted = await EncryptedFile.encrypt(
+      HEX.decode(args.store.entropy), args.password, metadata: {
+    baseAddressKey: baseAddress.toString(),
+    walletTypeKey: keyStoreWalletType
+  });
   args.port.send(json.encode(encrypted));
 }
 
@@ -72,13 +77,17 @@ class KeyStoreManager implements WalletManager {
 
   Future<KeyStore> readKeyStore(String password, File keyStoreFile) async {
     if (!keyStoreFile.existsSync()) {
-      throw InvalidWalletPath(
-          'Given keyStore does not exist ($keyStoreFile)');
+      throw WalletException('Given keyStore does not exist ($keyStoreFile)');
     }
-
     var content = await keyStoreFile.readAsString();
-    var seed =
-        await EncryptedFile.fromJson(json.decode(content)).decrypt(password);
+    var file = EncryptedFile.fromJson(json.decode(content));
+    if (file.metadata != null &&
+        file.metadata![walletTypeKey] != null &&
+        file.metadata![walletTypeKey] != keyStoreWalletType) {
+      throw WalletException(
+          'Wallet type (${file.metadata![walletTypeKey]}) is not supported');
+    }
+    var seed = await file.decrypt(password);
     return KeyStore.fromEntropy(HEX.encode(seed));
   }
 
@@ -88,7 +97,7 @@ class KeyStoreManager implements WalletManager {
         if (file is File) {
           return KeyStoreDefinition(file: file);
         } else {
-          throw InvalidWalletPath('Given keyStore is not a file ($name)');
+          throw WalletException('Given keyStore is not a file ($name)');
         }
       }
     }

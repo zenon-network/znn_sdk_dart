@@ -1,3 +1,4 @@
+export 'constants.dart';
 export 'derivation.dart';
 export 'encryptedfile.dart';
 export 'exceptions.dart';
