@@ -9,14 +9,14 @@ Future<void> main() async {
   var keyPair = keyStore.getKeyPair(0);
   var privateKey = keyPair.getPrivateKey();
   var publicKey = await keyPair.getPublicKey();
-  var address = await keyPair.address;
+  var address = await keyPair.getAddress();
 
   print('Cryptography examples');
   print('entropy: ${keyStore.entropy}');
   print('private key: ${HEX.encode(privateKey!)}');
   print('public key: ${HEX.encode(publicKey)}');
   print('address: $address');
-  print('core bytes: ${HEX.encode(address!.core!)}\n');
+  print('core bytes: ${HEX.encode(address.core!)}\n');
   print('Network examples');
   print('chain and network identifier: ' + getChainIdentifier().toString());
 }
