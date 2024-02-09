@@ -8,15 +8,18 @@ import 'package:hex/hex.dart';
 import 'package:znn_sdk_dart/znn_sdk_dart.dart';
 
 class EncryptedFile {
+  Map<String, dynamic>? metadata;
   _Crypto? crypto;
   int? timestamp;
   int? version;
 
-  EncryptedFile({this.crypto, this.timestamp, this.version});
+  EncryptedFile({this.metadata, this.crypto, this.timestamp, this.version});
 
-  static Future<EncryptedFile> encrypt(List<int> data, String password) async {
+  static Future<EncryptedFile> encrypt(List<int> data, String password,
+      {Map<String, dynamic>? metadata}) async {
     var timestamp = ((DateTime.now()).millisecondsSinceEpoch / 1000).round();
     var stored = EncryptedFile(
+        metadata: metadata,
         timestamp: timestamp,
         version: 1,
         crypto: _Crypto(
@@ -59,13 +62,16 @@ class EncryptedFile {
   }
 
   EncryptedFile.fromJson(Map<String, dynamic> json) {
-    crypto = json['crypto'] != null ? _Crypto.fromJson(json['crypto']) : null;
-    timestamp = json['timestamp'];
-    version = json['version'];
+    final data = {...json};
+    crypto =
+        json['crypto'] != null ? _Crypto.fromJson(data.remove('crypto')) : null;
+    timestamp = data.remove('timestamp');
+    version = data.remove('version');
+    metadata = data.isNotEmpty ? {...data} : null;
   }
 
   Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
+    final data = metadata != null ? {...metadata!} : <String, dynamic>{};
     if (crypto != null) {
       data['crypto'] = crypto!.toJson();
     }
