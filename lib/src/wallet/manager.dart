@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:hex/hex.dart';
 import 'package:path/path.dart' as path;
 import 'package:znn_sdk_dart/src/global.dart';
+import 'package:znn_sdk_dart/src/wallet/constants.dart';
 import 'package:znn_sdk_dart/src/wallet/exceptions.dart';
-import 'package:znn_sdk_dart/src/wallet/keyfile.dart';
 import 'package:znn_sdk_dart/src/wallet/keystore.dart';
 import 'package:znn_sdk_dart/src/wallet/interfaces.dart';
+import 'package:znn_sdk_dart/src/wallet/encryptedfile.dart';
 
 class KeyStoreOptions implements WalletOptions {
   final String decryptionPassword;
@@ -25,13 +27,17 @@ class SaveKeyStoreArguments {
 }
 
 void saveKeyStoreFunction(SaveKeyStoreArguments args) async {
-  var encrypted = await KeyFile.encrypt(args.store, args.password);
+  var baseAddress = await (await args.store.getAccount()).getAddress();
+  var encrypted = await EncryptedFile.encrypt(
+      HEX.decode(args.store.entropy), args.password, metadata: {
+    baseAddressKey: baseAddress.toString(),
+    walletTypeKey: keyStoreWalletType
+  });
   args.port.send(json.encode(encrypted));
 }
 
 class KeyStoreManager implements WalletManager {
   final Directory walletPath;
-  KeyStore? keyStoreInUse;
 
   KeyStoreManager({required this.walletPath});
 
@@ -69,25 +75,20 @@ class KeyStoreManager implements WalletManager {
     return completer.future;
   }
 
-  void setKeyStore(KeyStore keyStore) {
-    keyStoreInUse = keyStore;
-  }
-
-  String? getMnemonicInUse() {
-    if (keyStoreInUse == null) {
-      throw ArgumentError('The keyStore in use is null');
-    }
-    return keyStoreInUse!.mnemonic;
-  }
-
   Future<KeyStore> readKeyStore(String password, File keyStoreFile) async {
     if (!keyStoreFile.existsSync()) {
-      throw InvalidKeyStorePath(
-          'Given keyStore does not exist ($keyStoreFile)');
+      throw WalletException('Given keyStore does not exist ($keyStoreFile)');
     }
-
     var content = await keyStoreFile.readAsString();
-    return KeyFile.fromJson(json.decode(content)).decrypt(password);
+    var file = EncryptedFile.fromJson(json.decode(content));
+    if (file.metadata != null &&
+        file.metadata![walletTypeKey] != null &&
+        file.metadata![walletTypeKey] != keyStoreWalletType) {
+      throw WalletException(
+          'Wallet type (${file.metadata![walletTypeKey]}) is not supported');
+    }
+    var seed = await file.decrypt(password);
+    return KeyStore.fromEntropy(HEX.encode(seed));
   }
 
   Future<KeyStoreDefinition?> findKeyStore(String name) async {
@@ -96,7 +97,7 @@ class KeyStoreManager implements WalletManager {
         if (file is File) {
           return KeyStoreDefinition(file: file);
         } else {
-          throw InvalidKeyStorePath('Given keyStore is not a file ($name)');
+          throw WalletException('Given keyStore is not a file ($name)');
         }
       }
     }

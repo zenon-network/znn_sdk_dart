@@ -1,6 +1,7 @@
+export 'constants.dart';
 export 'derivation.dart';
+export 'encryptedfile.dart';
 export 'exceptions.dart';
-export 'keyfile.dart';
 export 'keypair.dart';
 export 'keystore.dart';
 export 'manager.dart';

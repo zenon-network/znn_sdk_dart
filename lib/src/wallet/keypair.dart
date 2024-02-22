@@ -4,7 +4,7 @@ import 'package:znn_sdk_dart/src/crypto/crypto.dart';
 import 'package:znn_sdk_dart/src/model/primitives.dart';
 import 'package:znn_sdk_dart/src/wallet/interfaces.dart';
 import 'package:znn_sdk_dart/src/model/nom/account_block_template.dart';
-import 'package:znn_sdk_dart/src/utils/block.dart';
+
 class KeyPair implements WalletAccount {
   List<int>? privateKey;
   List<int>? publicKey;
