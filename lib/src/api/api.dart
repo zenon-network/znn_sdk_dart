@@ -1,3 +1,4 @@
+export 'embedded/embedded.dart';
 export 'embedded.dart';
 export 'ledger.dart';
 export 'stats.dart';

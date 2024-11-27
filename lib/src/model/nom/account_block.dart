@@ -1,7 +1,8 @@
+import 'package:equatable/equatable.dart';
 import 'package:znn_sdk_dart/src/model/model.dart';
 import 'package:znn_sdk_dart/src/model/primitives/hash.dart';
 
-class AccountBlockConfirmationDetail {
+class AccountBlockConfirmationDetail extends Equatable {
   int numConfirmations;
   int momentumHeight;
   Hash momentumHash;
@@ -21,6 +22,14 @@ class AccountBlockConfirmationDetail {
     data['momentumTimestamp'] = momentumTimestamp;
     return data;
   }
+
+  @override
+  List<Object?> get props => [
+    numConfirmations,
+    momentumHeight,
+    momentumHash,
+    momentumTimestamp,
+  ];
 }
 
 class AccountBlock extends AccountBlockTemplate {

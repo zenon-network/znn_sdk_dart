@@ -1,9 +1,10 @@
+import 'package:equatable/equatable.dart';
 import 'package:znn_sdk_dart/src/model/primitives.dart';
 import 'package:znn_sdk_dart/src/utils/bytes.dart';
 
 final emptyHashHeight = HashHeight(emptyHash, 0);
 
-class HashHeight {
+class HashHeight extends Equatable {
   Hash? hash;
   int? height;
 
@@ -28,4 +29,7 @@ class HashHeight {
     return BytesUtils.merge(
         [hash!.getBytes(), BytesUtils.longToBytes(height!)]);
   }
+
+  @override
+  List<Object?> get props => [hash, height];
 }

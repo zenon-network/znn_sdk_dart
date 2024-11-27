@@ -39,21 +39,14 @@ class Hash {
         longString.substring(longString.length - 6);
   }
 
-  bool equals(Hash hash) {
-    if (this == hash) {
-      return true;
-    }
-
-    return DeepCollectionEquality().equals(this.getBytes(), hash.getBytes());
-  }
-
   int compareTo(Hash otherHash) =>
       hash.toString().compareTo(otherHash.toString());
 
+  @override
   bool operator ==(Object other) =>
       other is Hash &&
       other.runtimeType == runtimeType &&
-      other.toString() == toString();
+      DeepCollectionEquality().equals(this.getBytes(), other.getBytes());
 
   @override
   int get hashCode => toString().hashCode;

@@ -148,9 +148,20 @@ class DelegationInfo {
       );
 
   Map<String, dynamic> toJson() =>
-      {'name': name, 'status': status, 'weight': weight};
+      {'name': name, 'status': status, 'weight': weight.toString()};
 
   bool isPillarActive() {
     return status == 1;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is DelegationInfo &&
+          other.runtimeType == runtimeType &&
+          other.name == name &&
+          other.status == status &&
+          other.weight.toString() == weight.toString();
+
+  @override
+  int get hashCode => Object.hash(name, status, weight);
 }

@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:znn_sdk_dart/src/global.dart';
 import 'package:znn_sdk_dart/src/model/primitives.dart';
 import 'package:znn_sdk_dart/src/utils/utils.dart';
@@ -16,7 +17,7 @@ extension BlockTypeEnumExtension on BlockTypeEnum {
       toString().compareTo(blockTypeEnum.toString());
 }
 
-class AccountBlockTemplate {
+class AccountBlockTemplate extends Equatable {
   int version;
   int chainIdentifier;
   int blockType;
@@ -161,4 +162,26 @@ class AccountBlockTemplate {
   String toString() {
     return toJson().toString();
   }
+
+  @override
+  List<Object?> get props => [
+        version,
+        chainIdentifier,
+        blockType,
+        hash,
+        previousHash,
+        height,
+        momentumAcknowledged,
+        address,
+        toAddress,
+        amount,
+        tokenStandard,
+        fromBlockHash,
+        data,
+        fusedPlasma,
+        difficulty,
+        nonce,
+        publicKey,
+        signature,
+      ];
 }
