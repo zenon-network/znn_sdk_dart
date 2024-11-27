@@ -315,7 +315,7 @@ class Ed25519 {
 
   static KeyData getMasterKeyFromSeed(String seed) {
     final seedBytes = HEX.decode(seed);
-    return _getKeys(seedBytes as Uint8List, Ed25519._curveBytes as Uint8List);
+    return _getKeys(seedBytes as Uint8List, Ed25519._curveBytes);
   }
 
   static KeyData derivePath(String path, String seed) {

@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:argon2_ffi_base/argon2_ffi_base.dart';
@@ -13,53 +14,48 @@ Argon2FfiFlutter initArgon2() {
   }
 
   return Argon2FfiFlutter(resolveLibrary: (libraryName) {
-    var insideSdk = path.join('znn_sdk_dart', 'lib', 'src', 'argon2', 'blobs');
-    var currentPathListParts = path.split(Directory.current.path);
-    currentPathListParts.removeLast();
-    var executablePathListParts = path.split(Platform.resolvedExecutable);
-    executablePathListParts.removeLast();
-    var possiblePaths = List<String>.empty(growable: true);
-    possiblePaths.add(Directory.current.path);
-    possiblePaths.add(path.joinAll(executablePathListParts));
-    executablePathListParts.removeLast();
-    possiblePaths
-        .add(path.join(path.joinAll(executablePathListParts), 'Resources'));
-    possiblePaths.add(path.join(path.joinAll(currentPathListParts), insideSdk));
+    String libraryPath = '';
+    if (Platform.isAndroid) {
+      libraryPath = 'libargon2_ffi.so';
+      DynamicLibrary.open(libraryPath);
+    } else if (Platform.isIOS) {
+      DynamicLibrary.process();
+    } else {
+      String insideSdk = path.join('lib', 'src', 'argon2', 'blobs');
+      List<String> currentPathListParts = path.split(Directory.current.path);
+      currentPathListParts.removeLast();
+      List<String> executablePathListParts =
+          path.split(Platform.resolvedExecutable);
+      executablePathListParts.removeLast();
+      List<String> possiblePaths = List<String>.empty(growable: true);
+      possiblePaths.add(Directory.current.path);
+      possiblePaths.add(path.joinAll(executablePathListParts));
+      executablePathListParts.removeLast();
+      possiblePaths
+          .add(path.join(path.joinAll(executablePathListParts), 'Resources'));
+      possiblePaths
+          .add(path.join(path.joinAll(currentPathListParts), insideSdk));
+      possiblePaths.add(
+          path.join(path.joinAll(currentPathListParts), 'packages', insideSdk));
 
-    Directory pubCacheDir = Directory(getPubCachePath());
-    if (pubCacheDir.existsSync()) {
-      pubCacheDir.listSync(recursive: true, followLinks: false).forEach((f) {
-        if (f.toString().contains('argon2_ffi') &&
-            f.statSync().type == FileSystemEntityType.file &&
-            (path.extension(f.absolute.path).contains('.so') ||
-                path.extension(f.absolute.path).contains('.dylib') ||
-                path.extension(f.absolute.path).contains('.dll'))) {
-          var libPath = path.split(f.absolute.path);
-          libPath.removeLast();
-          possiblePaths.add(path.joinAll(libPath));
+      bool found = false;
+
+      for (String currentPath in possiblePaths) {
+        libraryPath = path.join(currentPath, libraryName);
+
+        File libFile = File(libraryPath);
+
+        if (libFile.existsSync()) {
+          found = true;
+          break;
         }
-      });
-    }
-
-    var libraryPath = '';
-    var found = false;
-
-    for (var currentPath in possiblePaths) {
-      libraryPath = path.join(currentPath, libraryName);
-
-      var libFile = File(libraryPath);
-
-      if (libFile.existsSync()) {
-        found = true;
-        break;
       }
-    }
 
-    if (!found) {
-      throw invalidArgon2LibPathException;
+      if (!found) {
+        throw invalidArgon2LibPathException;
+      }
+      logger.info('Loading ' + libraryName + ' from path ' + libraryPath);
     }
-    logger.info('Loading ' + libraryName + ' from path ' + libraryPath);
-
     return libraryPath;
   });
 }

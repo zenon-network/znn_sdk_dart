@@ -1,77 +1,46 @@
 import 'dart:io';
 
 import 'package:logging/logging.dart';
-import 'package:path/path.dart' as path;
+import 'package:znn_sdk_dart/src/utils/path.dart';
+import 'package:znn_sdk_dart/src/utils/path_stub.dart'
+    if (dart.library.ui) 'package:znn_sdk_dart/src/utils/path_flutter.dart'
+    if (dart.library.io) 'package:znn_sdk_dart/src/utils/path_dart.dart';
 
-export 'package:logging/logging.dart' show Level;
-
-const znnSdkVersion = '0.0.7';
+const znnSdkVersion = '0.2.0';
 const znnRootDirectory = 'znn';
 
-class ZnnPaths {
-  Directory main;
-  Directory wallet;
-  Directory cache;
+Future<Directory> znnDefaultMainDirectory =
+    getDefaultPaths().then((value) => value.main);
+Future<Directory> znnDefaultWalletDirectory =
+    getDefaultPaths().then((value) => value.wallet);
+Future<Directory> znnDefaultCacheDirectory =
+    getDefaultPaths().then((value) => value.cache);
 
-  ZnnPaths(
-      {required Directory main,
-      required Directory wallet,
-      required Directory cache})
-      : main = main,
-        wallet = wallet,
-        cache = cache;
-}
-
-ZnnPaths _getDefaultPaths() {
-  late Directory main;
-  if (Platform.isLinux) {
-    main = Directory(
-        path.join(Platform.environment['HOME']!, '.$znnRootDirectory'));
-  } else if (Platform.isMacOS) {
-    main = Directory(
-        path.join(Platform.environment['HOME']!, 'Library', znnRootDirectory));
-  } else if (Platform.isWindows) {
-    main = Directory(
-        path.join(Platform.environment['AppData']!, znnRootDirectory));
-  } else {
-    main =
-        Directory(path.join(Platform.environment['HOME']!, znnRootDirectory));
-  }
-  return ZnnPaths(
-      main: main,
-      wallet: Directory(path.join(main.path, 'wallet')),
-      cache: Directory(path.join(main.path, 'syrius')));
-}
-
-ZnnPaths znnDefaultPaths = _getDefaultPaths();
-Directory znnDefaultDirectory = znnDefaultPaths.main;
-Directory znnDefaultWalletDirectory = znnDefaultPaths.wallet;
-Directory znnDefaultCacheDirectory = znnDefaultPaths.cache;
-
-void ensureDirectoriesExist() {
+void ensureDirectoriesExist() async {
+  Directory znnDefaultWalletDirectory = await getZnnDefaultWalletDirectory();
   if (!znnDefaultWalletDirectory.existsSync()) {
     znnDefaultWalletDirectory.createSync(recursive: true);
   }
+  Directory znnDefaultCacheDirectory = await getZnnDefaultCacheDirectory();
   if (!znnDefaultCacheDirectory.existsSync()) {
     znnDefaultCacheDirectory.createSync(recursive: true);
   }
   return;
 }
 
-String getPubCachePath() {
-  Map env = Platform.environment;
+Future<Directory> getZnnDefaultMainDirectory() async {
+  ZnnPaths znnPaths = await getDefaultPaths();
+  return znnPaths.main;
+}
 
-  if (env.containsKey('PUB_CACHE')) {
-    return Directory(env['PUB_CACHE']).path;
-  } else if (Platform.isWindows) {
-    var pubCacheDirectory =
-        Directory(path.join(env['APPDATA'], 'Pub', 'Cache'));
-    if (pubCacheDirectory.existsSync()) {
-      return pubCacheDirectory.path;
-    }
-    return Directory(path.join(env['LOCALAPPDATA'], 'Pub', 'Cache')).path;
-  }
-  return Directory('${env['HOME']}/.pub-cache').path;
+Future<Directory> getZnnDefaultWalletDirectory() async {
+  ZnnPaths znnPaths = await getDefaultPaths();
+  return znnPaths.wallet;
+}
+
+Future<Directory> getZnnDefaultCacheDirectory() async {
+  ZnnPaths znnPaths = await getDefaultPaths();
+  return znnPaths.cache;
 }
 
 int chainId = 1; // Alphanet

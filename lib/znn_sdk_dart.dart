@@ -16,3 +16,4 @@ export 'src/pow/pow.dart';
 export 'src/utils/utils.dart';
 export 'src/wallet/wallet.dart';
 export 'src/zenon.dart';
+export 'src/wallet/wordlist.dart';

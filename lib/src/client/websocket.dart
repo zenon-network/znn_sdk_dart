@@ -9,7 +9,7 @@ import 'package:znn_sdk_dart/znn_sdk_dart.dart';
 
 enum WebsocketStatus { uninitialized, connecting, running, stopped }
 
-typedef ConnectionEstablishedCallback = void Function(
+typedef ConnectionEstablishedCallback = Future<void> Function(
     Stream<Map<String, dynamic>?> allResponseBroadcaster);
 
 class WsClient implements Client {
@@ -59,7 +59,7 @@ class WsClient implements Client {
       var ws = WebSocket.connect(url).timeout(Duration(seconds: 5));
 
       try {
-        var wsConnection = await ws;
+        WebSocket wsConnection = await ws;
         logger.info('Websocket connection successfully established');
 
         // check connection health each 5 seconds
@@ -81,8 +81,12 @@ class WsClient implements Client {
         _wsRpc2Client!.listen().then((_) {
           restart();
         });
-        _onConnectionCallbacks
-            .forEach((callback) => callback(_wsResponseBroadcaster!));
+
+        await Future.forEach(
+          _onConnectionCallbacks,
+          (callback) => callback(_wsResponseBroadcaster!),
+        );
+
         if (_lastRestartedEvent != null && !_lastRestartedEvent!) {
           restartedStreamController.sink.add(true);
         }

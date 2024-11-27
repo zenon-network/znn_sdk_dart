@@ -150,8 +150,8 @@ class BlockUtils {
       logger.info(
           'Generating Plasma for block: hash=${_getPoWData(transaction)}');
       generatingPowCallback?.call(PowStatus.generating);
-      transaction.nonce = await generatePoW(
-          _getPoWData(transaction), transaction.difficulty);
+      transaction.nonce =
+          await generatePoW(_getPoWData(transaction), transaction.difficulty);
       generatingPowCallback?.call(PowStatus.done);
     } else {
       transaction.fusedPlasma = response.basePlasma;

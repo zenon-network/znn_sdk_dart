@@ -1,4 +1,4 @@
-# Zenon Dart SDK 
+# Zenon Dart SDK
 
 [![Tests for znn_sdk_dart](https://github.com/alienc0der/znn_sdk_dart/actions/workflows/znn_sdk_tests.yml/badge.svg?branch=cicd)](https://github.com/alienc0der/znn_sdk_dart/actions/workflows/znn_sdk_tests.yml)
 
@@ -13,7 +13,7 @@ dependencies:
   znn_sdk_dart: ^latest_version
 ```
 
-> Notice: `znn_sdk_dart` requires Dart version `>=2.14.0`
+> Notice: `znn_sdk_dart` requires Dart version `>=3.2.0`
 
 You can also use a specific GitHub tag or branch:
 

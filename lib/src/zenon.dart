@@ -8,7 +8,8 @@ import 'package:znn_sdk_dart/src/pow/pow.dart';
 import 'package:znn_sdk_dart/src/utils/utils.dart';
 import 'package:znn_sdk_dart/src/wallet/wallet.dart';
 
-var noKeyPairSelectedException = ZnnSdkException('No default wallet account selected');
+var noKeyPairSelectedException =
+    ZnnSdkException('No default wallet account selected');
 
 class Zenon {
   static final Zenon _singleton = Zenon._internal();
@@ -30,7 +31,9 @@ class Zenon {
   }
 
   Zenon._internal() {
-    keyStoreManager = KeyStoreManager(walletPath: znnDefaultWalletDirectory);
+    znnDefaultWalletDirectory.then((value) {
+      keyStoreManager = KeyStoreManager(walletPath: value);
+    });
 
     wsClient = WsClient();
     ledger = api.LedgerApi();
@@ -45,14 +48,20 @@ class Zenon {
   }
 
   Future<AccountBlockTemplate> send(AccountBlockTemplate transaction,
-      {WalletAccount? currentKeyPair, void Function(PowStatus)? generatingPowCallback, waitForRequiredPlasma = false}) async {
+      {WalletAccount? currentKeyPair,
+      void Function(PowStatus)? generatingPowCallback,
+      waitForRequiredPlasma = false}) async {
     currentKeyPair ??= defaultKeyPair;
     if (currentKeyPair == null) throw noKeyPairSelectedException;
-    return BlockUtils.send(transaction, currentKeyPair, generatingPowCallback: generatingPowCallback, waitForRequiredPlasma: waitForRequiredPlasma);
+    return BlockUtils.send(transaction, currentKeyPair,
+        generatingPowCallback: generatingPowCallback,
+        waitForRequiredPlasma: waitForRequiredPlasma);
   }
 
-  Future<bool> requiresPoW(AccountBlockTemplate transaction, {WalletAccount? blockSigningKey}) async {
+  Future<bool> requiresPoW(AccountBlockTemplate transaction,
+      {WalletAccount? blockSigningKey}) async {
     blockSigningKey ??= defaultKeyPair;
-    return BlockUtils.requiresPoW(transaction, blockSigningKey: blockSigningKey);
+    return BlockUtils.requiresPoW(transaction,
+        blockSigningKey: blockSigningKey);
   }
 }

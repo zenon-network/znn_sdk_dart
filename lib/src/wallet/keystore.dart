@@ -91,7 +91,7 @@ class KeyStore implements Wallet {
   Future<FindResponse?> findAddress(Address address, int numOfAddresses) async {
     for (var i = 0; i < numOfAddresses; i++) {
       var pair = getKeyPair(i);
-      if ((await pair.address)!.equals(address)) {
+      if ((await pair.address).equals(address)) {
         return FindResponse(path: null, index: i, keyPair: pair);
       }
     }

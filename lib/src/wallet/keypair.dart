@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:isolate';
 
 import 'package:znn_sdk_dart/src/crypto/crypto.dart';
 import 'package:znn_sdk_dart/src/model/primitives.dart';
@@ -21,18 +22,16 @@ class KeyPair implements WalletAccount {
   }
 
   Future<List<int>> getPublicKey() async {
-    publicKey ??= await Crypto.getPublicKey(privateKey);
+    publicKey ??= await Isolate.run(() => Crypto.getPublicKey(privateKey));
     return publicKey!;
   }
 
-  Future<Address?> get address async {
-    return await getAddress();
-  }
+  Future<Address> get address => Isolate.run(getAddress);
 
   Future<Address> getAddress() async {
     if (_address == null) {
       publicKey = await getPublicKey();
-      _address = Address.fromPublicKey(publicKey!);
+      _address = await Isolate.run(() => Address.fromPublicKey(publicKey!));
     }
     return _address!;
   }
@@ -42,7 +41,15 @@ class KeyPair implements WalletAccount {
   }
 
   Future<List<int>> signTx(AccountBlockTemplate tx) async {
-    return Crypto.sign(tx.hash.getBytes()!, privateKey, (await getPublicKey()));
+    final List<int> publicKey = await getPublicKey();
+
+    return await Isolate.run(
+      () => Crypto.sign(
+        tx.hash.getBytes()!,
+        privateKey,
+        publicKey,
+      ),
+    );
   }
 
   Future<bool> verify(List<int> signature, List<int> message) async {
