@@ -63,4 +63,13 @@ class SyncInfo {
       : state = SyncState.values[json['state'] ?? 0],
         currentHeight = json['currentHeight'],
         targetHeight = json['targetHeight'];
+
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    data['state'] = state.index;
+    data['currentHeight'] = currentHeight;
+    data['targetHeight'] = targetHeight;
+
+    return data;
+  }
 }

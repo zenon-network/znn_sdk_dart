@@ -1,6 +1,7 @@
+import 'package:equatable/equatable.dart';
 import 'package:znn_sdk_dart/src/model/primitives.dart';
 
-class StakeList {
+class StakeList extends Equatable {
   BigInt totalAmount;
   BigInt totalWeightedAmount;
   int count;
@@ -19,9 +20,27 @@ class StakeList {
         list = (json['list'] as List)
             .map((entry) => StakeEntry.fromJson(entry))
             .toList();
+
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    data['totalAmount'] = totalAmount.toString();
+    data['totalWeightedAmount'] = totalWeightedAmount.toString();
+    data['count'] = count;
+    data['list'] = list.map((entry) => entry.toJson()).toList();
+
+    return data;
+  }
+
+  @override
+  List<Object?> get props => [
+        count,
+        list,
+        totalAmount,
+        totalWeightedAmount,
+      ];
 }
 
-class StakeEntry {
+class StakeEntry extends Equatable {
   final BigInt amount;
   final BigInt weightedAmount;
   final int startTimestamp;
@@ -44,4 +63,26 @@ class StakeEntry {
       expirationTimestamp: json['expirationTimestamp'],
       address: Address.parse(json['address']),
       id: Hash.parse(json['id']));
+
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    data['amount'] = amount.toString();
+    data['weightedAmount'] = weightedAmount.toString();
+    data['startTimestamp'] = startTimestamp;
+    data['expirationTimestamp'] = expirationTimestamp;
+    data['address'] = address.toString();
+    data['id'] = id.toString();
+
+    return data;
+  }
+
+  @override
+  List<Object?> get props => [
+        address,
+        amount,
+        expirationTimestamp,
+        id,
+        startTimestamp,
+        weightedAmount,
+      ];
 }

@@ -82,6 +82,7 @@ class Address {
         DeepCollectionEquality().equals(core, address.core);
   }
 
+  @override
   bool operator ==(Object other) =>
       other is Address &&
       other.runtimeType == runtimeType &&

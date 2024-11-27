@@ -1,8 +1,9 @@
 import 'package:collection/collection.dart' show IterableExtension;
+import 'package:equatable/equatable.dart';
 import 'package:znn_sdk_dart/src/model/nom.dart';
 import 'package:znn_sdk_dart/src/model/primitives.dart';
 
-class AccountInfo {
+class AccountInfo extends Equatable {
   String? address;
   int? blockCount;
   List<BalanceInfoListItem>? balanceInfoList;
@@ -19,6 +20,25 @@ class AccountInfo {
                 (e) => BalanceInfoListItem.fromJson(json['balanceInfoMap'][e]))
             .toList()
         : [];
+  }
+
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    if (address != null) {
+      data['address'] = address;
+    }
+    if (blockCount != null) {
+      data['accountHeight'] = blockCount;
+    }
+    if (balanceInfoList != null) {
+      final Iterable<String> keys =
+          balanceInfoList!.map((e) => e.token!.tokenStandard.toString());
+      final Iterable<Map<String, dynamic>> values =
+          balanceInfoList!.map((e) => e.toJson());
+      final Map<String, dynamic> finalMap = Map.fromIterables(keys, values);
+      data['balanceInfoMap'] = finalMap;
+    }
+    return data;
   }
 
   BigInt? znn() => getBalance(znnZts);
@@ -42,9 +62,12 @@ class AccountInfo {
       return null;
     }
   }
+
+  @override
+  List<Object?> get props => [address, blockCount, balanceInfoList];
 }
 
-class BalanceInfoListItem {
+class BalanceInfoListItem extends Equatable {
   Token? token;
   BigInt? balance;
 
@@ -64,4 +87,7 @@ class BalanceInfoListItem {
     data['balance'] = balance.toString();
     return data;
   }
+
+  @override
+  List<Object?> get props => [token, balance];
 }

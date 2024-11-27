@@ -1,6 +1,7 @@
+import 'package:equatable/equatable.dart';
 import 'package:znn_sdk_dart/src/model/primitives.dart';
 
-class SentinelInfo {
+class SentinelInfo extends Equatable {
   Address owner;
   int registrationTimestamp;
   bool isRevocable;
@@ -21,9 +22,18 @@ class SentinelInfo {
         'revokeCooldown': revokeCooldown,
         'active': active
       };
+
+  @override
+  List<Object?> get props => [
+        active,
+        isRevocable,
+        owner,
+        registrationTimestamp,
+        revokeCooldown,
+      ];
 }
 
-class SentinelInfoList {
+class SentinelInfoList extends Equatable {
   int count;
   List<SentinelInfo> list;
 
@@ -37,4 +47,7 @@ class SentinelInfoList {
 
   Map<String, dynamic> toJson() =>
       {'count': count, 'list': list.map((v) => v.toJson()).toList()};
+
+  @override
+  List<Object?> get props => [count, list];
 }
