@@ -9,7 +9,7 @@ dependencies:
   equatable: ^2.0.5
   bip39_mnemonic: ^4.0.1
   hex: ^0.2.0
-  bip32: ^2.0.0
+  bip32_plus: ^1.0.0
   web_socket_channel: ^3.0.3
   argon2_ffi_base: ^1.1.1
   cryptography: ^2.0.5
