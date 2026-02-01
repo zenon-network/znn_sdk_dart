@@ -209,7 +209,7 @@ class WrapTokenRequest {
     required this.fee,
     required this.signature,
     required this.creationMomentumHeight,
-    required this.confirmationsToFinality, // ADD
+    required this.confirmationsToFinality,
   });
 
   WrapTokenRequest.fromJson(Map<String, dynamic> json)
