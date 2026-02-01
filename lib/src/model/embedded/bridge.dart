@@ -196,6 +196,7 @@ class WrapTokenRequest {
   BigInt fee;
   String signature;
   int creationMomentumHeight;
+  int confirmationsToFinality;
 
   WrapTokenRequest({
     required this.networkClass,
@@ -208,6 +209,7 @@ class WrapTokenRequest {
     required this.fee,
     required this.signature,
     required this.creationMomentumHeight,
+    required this.confirmationsToFinality, // ADD
   });
 
   WrapTokenRequest.fromJson(Map<String, dynamic> json)
@@ -220,7 +222,8 @@ class WrapTokenRequest {
         amount = BigInt.parse(json['amount']),
         fee = BigInt.parse(json['fee']),
         signature = json['signature'],
-        creationMomentumHeight = json['creationMomentumHeight'];
+        creationMomentumHeight = json['creationMomentumHeight'],
+        confirmationsToFinality = json['confirmationsToFinality'];
 
   Map<String, dynamic> toJson() => {
         'networkClass': networkClass,
@@ -233,6 +236,7 @@ class WrapTokenRequest {
         'fee': fee.toString(),
         'signature': signature,
         'creationMomentumHeight': creationMomentumHeight,
+        'confirmationsToFinality': confirmationsToFinality,
       };
 }
 
@@ -272,6 +276,7 @@ class UnwrapTokenRequest {
   String signature;
   int redeemed;
   int revoked;
+  int redeemableIn;
 
   UnwrapTokenRequest({
     required this.registrationMomentumHeight,
@@ -286,6 +291,7 @@ class UnwrapTokenRequest {
     required this.signature,
     required this.redeemed,
     required this.revoked,
+    required this.redeemableIn,
   });
 
   UnwrapTokenRequest.fromJson(Map<String, dynamic> json)
@@ -300,7 +306,8 @@ class UnwrapTokenRequest {
         amount = BigInt.parse(json['amount']),
         signature = json['signature'],
         redeemed = json['redeemed'],
-        revoked = json['revoked'];
+        revoked = json['revoked'],
+        redeemableIn = json['redeemableIn'];
 
   Map<String, dynamic> toJson() => {
         'registrationMomentumHeight': registrationMomentumHeight,
@@ -315,6 +322,7 @@ class UnwrapTokenRequest {
         'signature': signature,
         'redeemed': redeemed,
         'revoked': revoked,
+        'redeemableIn': redeemableIn,
       };
 }
 
