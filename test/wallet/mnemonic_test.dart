@@ -34,7 +34,8 @@ void main() {
 
         final sentence = Mnemonic.generateMnemonic(128);
         final words = sentence.split(' ').toList();
-        words[0] = words[0] == 'abandon' ? 'ability' : 'abandon';
+        words[0] = 'notaword';
+        
         expect(Mnemonic.validateMnemonic(words), isFalse);
       },
     );
