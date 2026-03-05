@@ -13,7 +13,7 @@ dependencies:
   znn_sdk_dart: ^latest_version
 ```
 
-> Notice: `znn_sdk_dart` requires Dart version `>=2.14.0`
+> Notice: `znn_sdk_dart` requires Dart version `>=3.7.0`
 
 You can also use a specific GitHub tag or branch:
 
