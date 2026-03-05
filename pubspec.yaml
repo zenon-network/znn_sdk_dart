@@ -1,29 +1,29 @@
 name: znn_sdk_dart
 description: Zenon SDK for Dart and Flutter
-version: 0.0.8
+version: 1.0.0
 
 environment:
-  sdk: '>=2.14.0 <3.0.0'
+  sdk: '>=3.7.0 <4.0.0'
 
 dependencies:
   equatable: ^2.0.5
-  bip39: ^1.0.6
+  bip39_mnemonic: ^4.0.1
   hex: ^0.2.0
-  bip32: ^2.0.0
-  web_socket_channel: ^2.3.0
+  bip32_plus: ^1.0.0
+  web_socket_channel: ^3.0.3
   argon2_ffi_base: ^1.1.1
   cryptography: ^2.0.5
-  pointycastle: ^3.6.2
+  pointycastle: ">=3.0.0 <5.0.0"
   bech32: ^0.2.1
   sha3: ^0.2.0
-  json_rpc_2: ^3.0.2
+  json_rpc_2: ^4.0.0
   path: ^1.8.2
   collection: ^1.17.1
   logging: ^1.2.0
   stream_channel: ^2.1.2
   ffi: ^2.0.2
-  big_decimal: ^0.5.0
+  big_decimal: ^0.7.0
 
 dev_dependencies:
-  lints: ^2.1.1
-  test: ^1.24.4
+  lints: ^6.1.0
+  test: ^1.29.0

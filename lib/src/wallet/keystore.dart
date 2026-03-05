@@ -1,6 +1,7 @@
 import 'dart:io';
+import 'dart:typed_data';
 
-import 'package:bip39/bip39.dart' as bip39;
+import 'package:bip39_mnemonic/bip39_mnemonic.dart' as bip39;
 import 'package:cryptography/cryptography.dart' as cryptography;
 import 'package:hex/hex.dart';
 import 'package:path/path.dart' as path;
@@ -51,22 +52,54 @@ class KeyStore implements Wallet {
     return KeyStore.fromEntropy(HEX.encode(entropy.bytes));
   }
 
-  void setMnemonic(String mnemonic) {
-    if (!bip39.validateMnemonic(mnemonic)) {
-      throw ArgumentError.value(mnemonic, 'mnemonic');
-    }
+  /// Sets and validates a BIP-39 mnemonic using the English wordlist.
+  ///
+  /// This function uses the `bip39_mnemonic` package and replaces the legacy
+  /// `bip39` API (`validateMnemonic`, `mnemonicToEntropy`, `mnemonicToSeedHex`).
+  ///
+  /// Behavior:
+  /// - Uses the English BIP-39 wordlist only.
+  /// - Validates words and checksum.
+  /// - Normalizes the mnemonic sentence.
+  /// - Derives entropy and seed as hexadecimal strings.
+  ///
+  /// Throws:
+  /// - [ArgumentError] if the mnemonic is invalid.
+  void setMnemonic(String sentence) {
+    try {
+      final m = bip39.Mnemonic.fromSentence(sentence, bip39.Language.english);
 
-    this.mnemonic = mnemonic;
-    entropy = bip39.mnemonicToEntropy(this.mnemonic);
-    seed = bip39.mnemonicToSeedHex(this.mnemonic!);
+      mnemonic = m.sentence; // normalized
+      entropy = HEX.encode(m.entropy); // hex string
+      seed = HEX.encode(m.seed); // hex string
+    } catch (_) {
+      throw ArgumentError.value(sentence, 'mnemonic');
+    }
   }
 
   void setSeed(String seed) {
     this.seed = seed;
   }
 
-  void setEntropy(String entropy) {
-    setMnemonic(bip39.entropyToMnemonic(entropy));
+  /// Sets the mnemonic derived from the given BIP-39 entropy (hex).
+  ///
+  /// Entropy must be a valid hex string representing
+  /// 128–256 bits (multiple of 32).
+  ///
+  /// Throws:
+  /// - [ArgumentError] if the entropy is invalid.
+  void setEntropy(String entropyHex) {
+    try {
+      final entropyBytes = Uint8List.fromList(HEX.decode(entropyHex));
+
+      final m = bip39.Mnemonic(entropyBytes, bip39.Language.english);
+
+      mnemonic = m.sentence;
+      entropy = entropyHex.toLowerCase();
+      seed = HEX.encode(m.seed);
+    } catch (_) {
+      throw ArgumentError.value(entropyHex, 'entropy');
+    }
   }
 
   Future<WalletAccount> getAccount([int index = 0]) async {
@@ -75,7 +108,8 @@ class KeyStore implements Wallet {
 
   KeyPair getKeyPair([int index = 0]) {
     return KeyPair(
-        Crypto.deriveKey(Derivation.getDerivationAccount(index), seed!));
+      Crypto.deriveKey(Derivation.getDerivationAccount(index), seed!),
+    );
   }
 
   Future<List<Address?>> deriveAddressesByRange(int left, int right) async {
