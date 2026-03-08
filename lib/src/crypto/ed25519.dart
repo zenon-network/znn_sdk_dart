@@ -315,7 +315,7 @@ class Ed25519 {
 
   static KeyData getMasterKeyFromSeed(String seed) {
     final seedBytes = HEX.decode(seed);
-    return _getKeys(seedBytes as Uint8List, Ed25519._curveBytes as Uint8List);
+    return _getKeys(seedBytes as Uint8List, Ed25519._curveBytes);
   }
 
   static KeyData derivePath(String path, String seed) {
@@ -323,13 +323,21 @@ class Ed25519 {
       throw ArgumentError(
           'Invalid derivation path. Expected BIP32 path format');
     }
-    var master = getMasterKeyFromSeed(seed);
-    var segments = path.split('/');
-    segments = segments.sublist(1);
+    KeyData master = getMasterKeyFromSeed(seed);
+    List<String> segments = path.split('/');
+    // Skipping the first segment if it is "m" to handle absolute paths
+    segments = (segments.first == 'm') ? segments.sublist(1) : segments;
 
-    return segments.fold<KeyData>(master, (prevKeyData, indexStr) {
-      var index = int.parse(indexStr.substring(0, indexStr.length - 1));
-      return _getCKDPriv(prevKeyData, index + hardenedOffset);
+    return segments.fold<KeyData>(master, (prevKeyData, segment) {
+      bool isHardened = segment.endsWith("'");
+      // Remove the hardened apostrophe if present
+      int index = int.parse(
+          isHardened ? segment.substring(0, segment.length - 1) : segment);
+      // Apply the hardened offset if necessary
+      if (isHardened) {
+        index += hardenedOffset;
+      }
+      return _getCKDPriv(prevKeyData, index);
     });
   }
 }
