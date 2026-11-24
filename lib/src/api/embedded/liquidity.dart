@@ -29,20 +29,20 @@ class LiquidityApi {
 
   Future<SecurityInfo> getSecurityInfo() async {
     var response =
-        await client.sendRequest('embedded.liquidity.getSecurityInfo');
+        await client.sendRequest('embedded.liquidity.getSecurityInfo', []);
     return SecurityInfo.fromJson(response!);
   }
 
   Future<TimeChallengesList> getTimeChallengesInfo() async {
     var response =
-        await client.sendRequest('embedded.liquidity.getTimeChallengesInfo');
+        await client.sendRequest('embedded.liquidity.getTimeChallengesInfo', []);
     return TimeChallengesList.fromJson(response!);
   }
 
   // RPC
   Future<LiquidityInfo> getLiquidityInfo() async {
     var response =
-        await client.sendRequest('embedded.liquidity.getLiquidityInfo');
+        await client.sendRequest('embedded.liquidity.getLiquidityInfo', []);
     return LiquidityInfo.fromJson(response!);
   }
 

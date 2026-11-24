@@ -27,6 +27,8 @@ class PlasmaApi {
     return FusionEntryList.fromJson(response!);
   }
 
+  @Deprecated('embedded.plasma.getRequiredFusionAmount is not served by the '
+      'node; use getPlasmaByQsr for the client-side conversion instead')
   Future<int> getRequiredFusionAmount(int requiredPlasma) async {
     return await client.sendRequest(
         'embedded.plasma.getRequiredFusionAmount', [requiredPlasma]);

@@ -5,13 +5,32 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:ffi/ffi.dart';
+import 'package:hex/hex.dart';
 import 'package:path/path.dart' as path;
+import 'package:znn_sdk_dart/src/crypto/crypto.dart';
 import 'package:znn_sdk_dart/src/global.dart';
 import 'package:znn_sdk_dart/src/model/primitives/hash.dart';
 
 enum PowStatus {
   generating,
   done,
+}
+
+/// Custom PoW generation backend; returns the hex nonce for [dataHash] at
+/// [difficulty]. See [setPowProvider].
+typedef PowProvider = Future<String> Function(Hash dataHash, int difficulty);
+
+PowProvider? _powProvider;
+
+/// Routes subsequent [generatePoW] calls through [provider] instead of the
+/// bundled native libpow_links library.
+void setPowProvider(PowProvider provider) {
+  _powProvider = provider;
+}
+
+/// Restores the default native PoW backend.
+void clearPowProvider() {
+  _powProvider = null;
 }
 
 var invalidPowLinksLibPathException =
@@ -125,6 +144,12 @@ void _generatePowFunction(_GeneratePowFunctionArguments args) {
 // Returns a hex representation of nonce.
 // Runs single threaded, with native c code.
 Future<String> generatePoW(Hash hash, int? difficulty) async {
+  if (difficulty == null) {
+    throw ArgumentError('difficulty must not be null');
+  }
+  if (_powProvider != null) {
+    return _powProvider!(hash, difficulty);
+  }
   if (_generatePoWFunction == null) {
     initializePoWLinks();
   }
@@ -153,6 +178,41 @@ Future<String> generatePoW(Hash hash, int? difficulty) async {
     }
   });
   return completer.future;
+}
+
+/// Verifies that [nonce] (hex, 8 bytes) satisfies [difficulty] for
+/// [dataHash], mirroring the node's `pow.CheckPoWNonce`.
+///
+/// The check computes `sha3-256(nonce || dataHash)` and compares its first 8
+/// bytes, in little-endian order, against the threshold
+/// `2^64 - 2^64 / difficulty`.
+bool verifyPoW(Hash dataHash, int difficulty, String nonce) {
+  var nonceBytes = HEX.decode(nonce);
+  if (nonceBytes.length != 8) {
+    throw ArgumentError('invalid nonce length');
+  }
+  if (difficulty < 0) {
+    throw ArgumentError('difficulty must be non-negative');
+  }
+  var calc =
+      Crypto.digest([...nonceBytes, ...dataHash.getBytes()!]).sublist(0, 8);
+  var target = _targetByDifficulty(difficulty);
+  // Both are little-endian ordered; compare from the most significant byte.
+  for (var i = 7; i >= 0; i--) {
+    if (calc[i] > target[i]) return true;
+    if (calc[i] < target[i]) return false;
+  }
+  return true;
+}
+
+List<int> _targetByDifficulty(int difficulty) {
+  if (difficulty == 0) {
+    return List.filled(8, 0);
+  }
+  var x = BigInt.one << 64;
+  x = x - (BigInt.one << 64) ~/ BigInt.from(difficulty);
+  var mask = BigInt.from(0xff);
+  return List.generate(8, (i) => ((x >> (8 * i)) & mask).toInt());
 }
 
 // Generates a nonce for the empty hash. Does not use a random nonce.

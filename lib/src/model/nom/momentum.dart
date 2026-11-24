@@ -60,11 +60,8 @@ class Momentum {
     j['previousHash'] = previousHash.toString();
     j['height'] = height;
     j['timestamp'] = timestamp;
-    j['data'] = data != [] ? BytesUtils.bytesToBase64(data) : '';
-    j['content'] = [];
-    for (var entry in content) {
-      j['content'].add(entry.toString());
-    }
+    j['data'] = data.isNotEmpty ? BytesUtils.bytesToBase64(data) : '';
+    j['content'] = content.map((entry) => entry.toJson()).toList();
     j['changesHash'] = changesHash.toString();
     j['publicKey'] = publicKey;
     j['signature'] = signature;

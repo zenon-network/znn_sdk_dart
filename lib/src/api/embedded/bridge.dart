@@ -16,19 +16,19 @@ class BridgeApi {
 
   // Common RPC
   Future<SecurityInfo> getSecurityInfo() async {
-    var response = await client.sendRequest('embedded.bridge.getSecurityInfo');
+    var response = await client.sendRequest('embedded.bridge.getSecurityInfo', []);
     return SecurityInfo.fromJson(response!);
   }
 
   Future<TimeChallengesList> getTimeChallengesInfo() async {
     var response =
-        await client.sendRequest('embedded.bridge.getTimeChallengesInfo');
+        await client.sendRequest('embedded.bridge.getTimeChallengesInfo', []);
     return TimeChallengesList.fromJson(response!);
   }
 
   // RPC
   Future<BridgeInfo> getBridgeInfo() async {
-    var response = await client.sendRequest('embedded.bridge.getBridgeInfo');
+    var response = await client.sendRequest('embedded.bridge.getBridgeInfo', []);
     return BridgeInfo.fromJson(response!);
   }
 
@@ -53,7 +53,7 @@ class BridgeApi {
       {int pageIndex = 0, int pageSize = rpcMaxPageSize}) async {
     var response = await client.sendRequest('embedded.bridge.getAllNetworks', [
       pageIndex,
-      rpcMaxPageSize,
+      pageSize,
     ]);
     return BridgeNetworkInfoList.fromJson(response!);
   }

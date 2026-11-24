@@ -89,15 +89,20 @@ class GetRequiredParam {
 
   GetRequiredParam.fromJson(Map<String, dynamic> json)
       : address = Address.parse(json['address']),
-        blockType = int.parse(json['blockType']),
-        toAddress = Address.parse(json['toAddress']),
-        data = BytesUtils.base64ToBytes(json['data']);
+        blockType = json['blockType'] is int
+            ? json['blockType']
+            : int.parse(json['blockType']),
+        toAddress = json['toAddress'] == null
+            ? null
+            : Address.parse(json['toAddress']),
+        data =
+            json['data'] == null ? null : BytesUtils.base64ToBytes(json['data']);
 
   Map<String, dynamic> toJson() => {
         'address': address.toString(),
         'blockType': blockType,
         'toAddress': toAddress == null ? null : toAddress.toString(),
-        'data': BytesUtils.bytesToBase64(data!)
+        'data': data == null ? null : BytesUtils.bytesToBase64(data!)
       };
 
   @override

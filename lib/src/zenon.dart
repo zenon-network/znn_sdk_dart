@@ -44,11 +44,31 @@ class Zenon {
     subscribe.setClient(wsClient);
   }
 
+  /// Routes every API namespace through [client], e.g. an [HttpRpcClient].
+  ///
+  /// Pass [wsClient] to restore the default WebSocket transport. Note that
+  /// the subscribe API only functions over a WebSocket-backed client.
+  void setClient(Client client) {
+    ledger.setClient(client);
+    stats.setClient(client);
+    embedded.setClient(client);
+    subscribe.setClient(client);
+  }
+
   Future<AccountBlockTemplate> send(AccountBlockTemplate transaction,
       {WalletAccount? currentKeyPair, void Function(PowStatus)? generatingPowCallback, waitForRequiredPlasma = false}) async {
     currentKeyPair ??= defaultKeyPair;
     if (currentKeyPair == null) throw noKeyPairSelectedException;
     return BlockUtils.send(transaction, currentKeyPair, generatingPowCallback: generatingPowCallback, waitForRequiredPlasma: waitForRequiredPlasma);
+  }
+
+  /// Prepares [transaction] for publishing (autofill, plasma/PoW, hash,
+  /// signature) without sending it to the network.
+  Future<AccountBlockTemplate> prepareBlock(AccountBlockTemplate transaction,
+      {WalletAccount? currentKeyPair, void Function(PowStatus)? generatingPowCallback, waitForRequiredPlasma = false}) async {
+    currentKeyPair ??= defaultKeyPair;
+    if (currentKeyPair == null) throw noKeyPairSelectedException;
+    return BlockUtils.prepare(transaction, currentKeyPair, generatingPowCallback: generatingPowCallback, waitForRequiredPlasma: waitForRequiredPlasma);
   }
 
   Future<bool> requiresPoW(AccountBlockTemplate transaction, {WalletAccount? blockSigningKey}) async {

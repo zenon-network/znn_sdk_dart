@@ -52,4 +52,15 @@ class KeyPair implements WalletAccount {
   Future<List<int>> generatePublicKey(List<int> privateKey) async {
     return await Crypto.getPublicKey(privateKey);
   }
+
+  /// Zeroes and drops the key material held by this pair.
+  ///
+  /// The pair is unusable afterwards; signing or address derivation will fail.
+  void clear() {
+    privateKey?.fillRange(0, privateKey!.length, 0);
+    privateKey = null;
+    publicKey?.fillRange(0, publicKey!.length, 0);
+    publicKey = null;
+    _address = null;
+  }
 }

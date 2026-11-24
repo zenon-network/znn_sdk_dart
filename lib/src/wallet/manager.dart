@@ -87,8 +87,18 @@ class KeyStoreManager implements WalletManager {
       throw WalletException(
           'Wallet type (${file.metadata![walletTypeKey]}) is not supported');
     }
-    var seed = await file.decrypt(password);
-    return KeyStore.fromEntropy(HEX.encode(seed));
+    var entropy = await file.decrypt(password);
+    var store = KeyStore.fromEntropy(HEX.encode(entropy));
+    var baseAddress = file.metadata?[baseAddressKey];
+    if (baseAddress != null) {
+      var derived = (await store.getKeyPair(0).getAddress()).toString();
+      if (derived != baseAddress) {
+        throw WalletException(
+            'Key file base address ($baseAddress) does not match the '
+            'decrypted entropy (derived $derived)');
+      }
+    }
+    return store;
   }
 
   Future<KeyStoreDefinition?> findKeyStore(String name) async {

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:znn_sdk_dart/src/client/client.dart';
+import 'package:znn_sdk_dart/src/global.dart';
 import 'package:znn_sdk_dart/src/model/model.dart';
 import 'package:znn_sdk_dart/src/model/primitives/address.dart';
 import 'package:znn_sdk_dart/src/model/primitives/hash.dart';
@@ -13,9 +14,16 @@ class LedgerApi {
   }
 
   /// This method returns null if the account-block was accepted
-  Future publishRawTransaction(AccountBlockTemplate accountBlockTemplate) {
-    return client.sendRequest(
+  Future publishRawTransaction(
+      AccountBlockTemplate accountBlockTemplate) async {
+    var response = await client.sendRequest(
         'ledger.publishRawTransaction', [accountBlockTemplate.toJson()]);
+    if (response != null) {
+      throw ZnnSdkException(
+          'ledger.publishRawTransaction returned an unexpected non-null '
+          'result: $response');
+    }
+    return null;
   }
 
   Future<AccountBlockList> getUnconfirmedBlocksByAddress(Address address,

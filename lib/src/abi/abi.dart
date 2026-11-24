@@ -61,7 +61,10 @@ class Entry {
   }
 
   List<int> encodeArguments(var args) {
-    if (args.length > inputs!.length) throw Error();
+    if (args.length != inputs!.length) {
+      throw ZnnSdkException(
+          'expected ${inputs!.length} arguments, got ${args.length}');
+    }
     var staticSize = 0;
     var dynamicCnt = 0;
     for (var i = 0; i < args.length; i++) {
@@ -183,4 +186,24 @@ class Abi {
 
     return f!.decode(encoded);
   }
+
+  /// Decodes full calldata (4-byte selector followed by encoded arguments)
+  /// into the matched function name and its decoded argument values.
+  DecodedCall decodeCallData(List<int> encoded) {
+    for (var element in entries) {
+      if (AbiFunction.extractSignature(element.encodeSignature()).toString() ==
+          AbiFunction.extractSignature(encoded).toString()) {
+        var f = AbiFunction(element.name!, element.inputs!);
+        return DecodedCall(element.name!, f.decode(encoded));
+      }
+    }
+    throw ZnnSdkException('no ABI function matches the calldata selector');
+  }
+}
+
+class DecodedCall {
+  final String name;
+  final List args;
+
+  DecodedCall(this.name, this.args);
 }

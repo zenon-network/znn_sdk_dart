@@ -20,7 +20,7 @@ class BlockUtils {
     return [
       BlockTypeEnum.userReceive.index,
       BlockTypeEnum.genesisReceive.index,
-      BlockTypeEnum.contractReceive,
+      BlockTypeEnum.contractReceive.index,
     ].contains(blockType);
   }
 
@@ -168,17 +168,29 @@ class BlockUtils {
     return true;
   }
 
+  /// Autofills, attaches plasma/PoW, hashes, and signs [transaction] without
+  /// publishing it.
+  static Future<AccountBlockTemplate> prepare(
+      AccountBlockTemplate transaction, WalletAccount currentKeyPair,
+      {void Function(PowStatus)? generatingPowCallback,
+      waitForRequiredPlasma = false}) async {
+    await _checkAndSetFields(transaction, currentKeyPair);
+    await _setDifficulty(transaction,
+        generatingPowCallback: generatingPowCallback,
+        waitForRequiredPlasma: waitForRequiredPlasma);
+    await _setHashAndSignature(transaction, currentKeyPair);
+    return transaction;
+  }
+
   static Future<AccountBlockTemplate> send(
       AccountBlockTemplate transaction, WalletAccount currentKeyPair,
       {void Function(PowStatus)? generatingPowCallback,
       waitForRequiredPlasma = false}) async {
     var z = Zenon();
 
-    await _checkAndSetFields(transaction, currentKeyPair);
-    await _setDifficulty(transaction,
+    await prepare(transaction, currentKeyPair,
         generatingPowCallback: generatingPowCallback,
         waitForRequiredPlasma: waitForRequiredPlasma);
-    await _setHashAndSignature(transaction, currentKeyPair);
     await z.ledger.publishRawTransaction(transaction);
 
     logger.info('Published account-block');

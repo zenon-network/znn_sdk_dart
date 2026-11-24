@@ -53,14 +53,29 @@ class Address {
   List<int>? core;
 
   Address(String hrp, List<int> core) {
+    if (hrp != prefix) {
+      throw ArgumentError('invalid address prefix $hrp; expected $prefix');
+    }
+    if (core.length != coreSize) {
+      throw ArgumentError(
+          'invalid address core length ${core.length}; expected $coreSize');
+    }
     this.hrp = hrp;
     this.core = core;
   }
 
   Address.parse(String address) {
     var bech32 = bech32Codec.decode(address, addressLength);
+    if (bech32.hrp != prefix) {
+      throw ArgumentError(
+          'invalid address prefix ${bech32.hrp}; expected $prefix');
+    }
     hrp = bech32.hrp;
     core = convertBech32Bits(bech32.data, 5, 8, false);
+    if (core!.length != coreSize) {
+      throw ArgumentError(
+          'invalid address core length ${core!.length}; expected $coreSize');
+    }
   }
 
   @override

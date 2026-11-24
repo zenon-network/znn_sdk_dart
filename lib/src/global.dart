@@ -84,6 +84,16 @@ int getChainIdentifier() {
   return chainId;
 }
 
+int netId = 1; // Network identifier of the connected node
+
+void setNetworkId({int networkId = 1}) {
+  netId = networkId;
+}
+
+int getNetworkId() {
+  return netId;
+}
+
 final logger = Logger('ZNN-SDK');
 
 class ZnnSdkException implements Exception {

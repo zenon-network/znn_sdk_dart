@@ -12,7 +12,11 @@ class Definitions {
     {"type":"function","name":"Revoke","inputs":[{"name":"name","type":"string"}]},
     {"type":"function","name":"UpdatePillar","inputs":[{"name":"name","type":"string"},{"name":"producerAddress","type":"address"},{"name":"rewardAddress","type":"address"},{"name":"giveBlockRewardPercentage","type":"uint8"},{"name":"giveDelegateRewardPercentage","type":"uint8"}]},
     {"type":"function","name":"Delegate","inputs":[{"name":"name","type":"string"}]},
-    {"type":"function","name":"Undelegate","inputs":[]}
+    {"type":"function","name":"Undelegate","inputs":[]},
+    {"type":"function","name":"Update","inputs":[]},
+    {"type":"function","name":"DepositQsr","inputs":[]},
+    {"type":"function","name":"WithdrawQsr","inputs":[]},
+    {"type":"function","name":"CollectReward","inputs":[]}
   ]''';
 
   static final String _tokenDefinition = '''[
@@ -24,7 +28,11 @@ class Definitions {
 
   static final String _sentinelDefinition = '''[
     {"type":"function","name":"Register","inputs":[]},
-    {"type":"function","name":"Revoke","inputs":[]}
+    {"type":"function","name":"Revoke","inputs":[]},
+    {"type":"function","name":"Update","inputs":[]},
+    {"type":"function","name":"DepositQsr","inputs":[]},
+    {"type":"function","name":"WithdrawQsr","inputs":[]},
+    {"type":"function","name":"CollectReward","inputs":[]}
   ]''';
 
   static final String _swapDefinition = '''[
@@ -33,7 +41,9 @@ class Definitions {
 
   static final String _stakeDefinition = '''[
     {"type":"function","name":"Stake","inputs":[{"name":"durationInSec", "type":"int64"}]},
-    {"type":"function","name":"Cancel","inputs":[{"name":"id","type":"hash"}]}
+    {"type":"function","name":"Cancel","inputs":[{"name":"id","type":"hash"}]},
+    {"type":"function","name":"Update","inputs":[]},
+    {"type":"function","name":"CollectReward","inputs":[]}
   ]''';
 
   static final String _acceleratorDefinition = '''[
@@ -46,6 +56,7 @@ class Definitions {
       {"name":"id","type":"hash"},{"name":"name","type":"string"},{"name":"description","type":"string"},
       {"name":"url","type":"string"},{"name":"znnFundsNeeded","type":"uint256"},{"name":"qsrFundsNeeded","type":"uint256"}]},
     {"type":"function","name":"Donate", "inputs":[]},
+    {"type":"function","name":"Update","inputs":[]},
     {"type":"function","name":"VoteByName","inputs":[
       {"name":"id","type":"hash"},{"name":"name","type":"string"},{"name":"vote","type":"uint8"}]},
     {"type":"function","name":"VoteByProdAddress","inputs":[{"name":"id","type":"hash"},{"name":"vote","type":"uint8"}]}

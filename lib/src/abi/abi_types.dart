@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:hex/hex.dart';
+import 'package:znn_sdk_dart/src/global.dart';
 import 'package:znn_sdk_dart/src/model/primitives.dart';
 import 'package:znn_sdk_dart/src/utils/utils.dart';
 
@@ -21,19 +22,38 @@ class IntType extends NumericType {
     return BytesUtils.bigIntToBytesSigned(bigInt, AbiType.int32Size);
   }
 
+  /// Decodes a 32-byte word as a signed (two's complement) integer.
   static BigInt decodeInt(List<int> encoded, int offset) {
-    return BytesUtils.decodeBigInt(encoded.sublist(offset, offset + 32));
+    var word = encoded.sublist(offset, offset + 32);
+    var unsigned = BytesUtils.decodeBigInt(word);
+    if ((word[0] & 0x80) != 0) {
+      return unsigned - (BigInt.one << 256);
+    }
+    return unsigned;
   }
 
   @override
   List<int> encode(var value) {
     var bigInt = encodeInternal(value);
+    var bits = bitSize();
+    var bound = BigInt.one << (bits - 1);
+    if (bigInt < -bound || bigInt >= bound) {
+      throw ZnnSdkException(
+          'value $bigInt out of range for ${getCanonicalName()}');
+    }
     return encodeIntBig(bigInt);
   }
 
   @override
   dynamic decode(List<int> encoded, [int offset = 0]) {
-    return decodeInt(encoded, offset);
+    var value = decodeInt(encoded, offset);
+    var bits = bitSize();
+    var bound = BigInt.one << (bits - 1);
+    if (value < -bound || value >= bound) {
+      throw ZnnSdkException(
+          'decoded value $value out of range for ${getCanonicalName()}');
+    }
+    return value;
   }
 }
 
@@ -65,22 +85,15 @@ abstract class ArrayType extends AbiType {
   @override
   List<int> encode(var value) {
     if (value is List) {
-      var elems = [];
-      for (var i = 0; i < value.length; i++) {
-        elems.add(value[i]);
-      }
-      return encodeList(elems);
-    } else if (value is List) {
       return encodeList(value);
     } else if (value is String) {
       var array = jsonDecode(value);
-      var elems = [];
-      for (var i = 0; i < array.size(); i++) {
-        elems.add(array.get(i).toString());
+      if (array is! List) {
+        throw ZnnSdkException('cannot encode $value as an array');
       }
-      return encodeList(elems);
+      return encodeList(array);
     } else {
-      throw Error();
+      throw ZnnSdkException('cannot encode $value as an array');
     }
   }
 
@@ -112,12 +125,12 @@ abstract class ArrayType extends AbiType {
 
     for (var i = 0; i < len; i++) {
       if (elementType.isDynamicType()) {
-        ret[i] = elementType.decode(
-            encoded, origOffset + IntType.decodeInt(encoded, offset).toInt());
+        ret.add(elementType.decode(
+            encoded, origOffset + IntType.decodeInt(encoded, offset).toInt()));
       } else {
-        ret[i] = elementType.decode(encoded, offset);
+        ret.add(elementType.decode(encoded, offset));
       }
-      offset += int.parse(elementType.getFixedSize().toString());
+      offset += elementType.getFixedSize() as int;
     }
     return ret;
   }
@@ -137,29 +150,34 @@ class StaticArrayType extends ArrayType {
 
   @override
   String? getCanonicalName() {
-    return elementType.getCanonicalName() + '[' + size + ']';
+    return '${elementType.getCanonicalName()}[$size]';
   }
 
   @override
   List<int> encodeList(List l) {
-    if (l.length != size) throw Error();
+    if (l.length != size) {
+      throw ZnnSdkException(
+          'expected $size array elements, got ${l.length}');
+    }
     return encodeTuple(l);
   }
 
   @override
   dynamic decode(List<int> encoded, [int offset = 0]) {
-    var result = List<List<int>>.filled(size, [], growable: true);
+    return decodeTuple(encoded, offset, size);
+  }
 
-    for (var i = 0; i < size; i++) {
-      result[i] =
-          elementType.decode(encoded, offset + i * elementType.getFixedSize());
-    }
-
-    return result;
+  @override
+  bool isDynamicType() {
+    // A fixed-length array is itself dynamic when its elements are.
+    return elementType.isDynamicType();
   }
 
   @override
   int? getFixedSize() {
+    if (isDynamicType()) {
+      return AbiType.int32Size;
+    }
     return elementType.getFixedSize() * size;
   }
 }
@@ -181,21 +199,7 @@ class DynamicArrayType extends ArrayType {
   dynamic decode(List<int> encoded, [int origOffset = 0]) {
     var len = IntType.decodeInt(encoded, origOffset).toInt();
     origOffset += 32;
-    var offset = origOffset;
-    var ret = List<List<int>>.filled(len, [], growable: true);
-
-    for (var i = 0; i < len; i++) {
-      if (elementType.isDynamicType()) {
-        ret[i] = elementType.decode(
-            encoded, origOffset + IntType.decodeInt(encoded, offset).toInt());
-      } else {
-        ret[i] = elementType.decode(encoded, offset);
-      }
-
-      offset += int.parse(elementType.getFixedSize().toString());
-    }
-
-    return ret;
+    return decodeTuple(encoded, origOffset, len);
   }
 
   @override
@@ -268,32 +272,53 @@ class StringType extends BytesType {
 }
 
 class Bytes32Type extends AbiType {
-  Bytes32Type(var s) : super(s);
+  /// Number of bytes a value of this fixed-byte type must contain.
+  ///
+  /// Parsed from the type name (`bytes1` … `bytes32`); types without a
+  /// numeric suffix (e.g. `function`) span the full 32-byte word.
+  late final int size;
+
+  Bytes32Type(String s) : super(s) {
+    if (s.startsWith('bytes') && s.length > 'bytes'.length) {
+      var parsed = int.tryParse(s.substring('bytes'.length));
+      if (parsed == null || parsed < 1 || parsed > 32) {
+        throw UnsupportedError('The type $s is not supported');
+      }
+      size = parsed;
+    } else {
+      size = AbiType.int32Size;
+    }
+  }
 
   @override
   List<int> encode(var value) {
-    if (value is num) {
-      var bigInt = BigInt.from(value);
-      return IntType.encodeIntBig(bigInt);
-    } else if (value is String) {
-      var ret = List.filled(AbiType.int32Size, 0, growable: true);
-      var bytes = HEX.decode(value);
-      BytesUtils.arraycopy(bytes, 0, ret, 0, bytes.length);
-      return ret;
+    List<int> bytes;
+    if (value is String) {
+      bytes = HEX.decode(value.startsWith('0x') ? value.substring(2) : value);
     } else if (value is List<int>) {
-      var bytes = value;
-      var ret = List.filled(AbiType.int32Size, 0, growable: true);
-      BytesUtils.arraycopy(bytes, 0, ret, 0, bytes.length);
-      return ret;
+      bytes = value;
+    } else {
+      throw ZnnSdkException('cannot encode $value as ${getCanonicalName()}');
     }
-
-    throw Error();
+    if (bytes.length != size) {
+      throw ZnnSdkException(
+          'expected $size bytes for ${getCanonicalName()}, got ${bytes.length}');
+    }
+    var ret = List.filled(AbiType.int32Size, 0, growable: true);
+    BytesUtils.arraycopy(bytes, 0, ret, 0, bytes.length);
+    return ret;
   }
 
   @override
   dynamic decode(List<int> encoded, [int offset = 0]) {
-    var l = List.filled(AbiType.int32Size, 0, growable: true);
-    BytesUtils.arraycopy(encoded, offset, l, 0, getFixedSize());
+    for (var i = size; i < AbiType.int32Size; i++) {
+      if (encoded[offset + i] != 0) {
+        throw ZnnSdkException(
+            'non-zero padding in ${getCanonicalName()} word');
+      }
+    }
+    var l = List.filled(size, 0, growable: true);
+    BytesUtils.arraycopy(encoded, offset, l, 0, size);
     return l;
   }
 }
@@ -370,7 +395,7 @@ class UnsignedIntType extends NumericType {
 
   static List<int> encodeIntBig(BigInt bigInt) {
     if (bigInt.sign == -1) {
-      throw Error();
+      throw ZnnSdkException('cannot encode negative value as unsigned integer');
     }
     return BytesUtils.bigIntToBytes(bigInt, 32);
   }
@@ -378,12 +403,23 @@ class UnsignedIntType extends NumericType {
   @override
   List<int> encode(var value) {
     var bigInt = encodeInternal(value);
+    var bits = bitSize();
+    if (bigInt.sign == -1 || bigInt >= (BigInt.one << bits)) {
+      throw ZnnSdkException(
+          'value $bigInt out of range for ${getCanonicalName()}');
+    }
     return encodeIntBig(bigInt);
   }
 
   @override
   dynamic decode(List<int> encoded, [int offset = 0]) {
-    return decodeInt(encoded, offset);
+    var value = decodeInt(encoded, offset);
+    var bits = bitSize();
+    if (value >= (BigInt.one << bits)) {
+      throw ZnnSdkException(
+          'decoded value $value out of range for ${getCanonicalName()}');
+    }
+    return value;
   }
 }
 
@@ -392,17 +428,18 @@ class BoolType extends IntType {
 
   @override
   List<int> encode(var value) {
-    if (value is String) {
-      return super.encode(value == 'true' ? 1 : 0);
-    } else if (value is bool) {
-      return super.encode(value == true ? 1 : 0);
+    if (value is bool) {
+      return super.encode(value ? 1 : 0);
     }
-    throw Error();
+    throw ZnnSdkException('cannot encode $value as bool');
   }
 
   @override
   dynamic decode(List<int> encoded, [int offset = 0]) {
-    return (super.decode(encoded, offset).toString() != '0');
+    var value = IntType.decodeInt(encoded, offset);
+    if (value == BigInt.zero) return false;
+    if (value == BigInt.one) return true;
+    throw ZnnSdkException('decoded word is not a canonical bool');
   }
 }
 
@@ -425,6 +462,28 @@ class FunctionType extends Bytes32Type {
 
 abstract class NumericType extends AbiType {
   NumericType(String name) : super(name);
+
+  /// Bit width of this numeric type, parsed from the `intN`/`uintN` name.
+  ///
+  /// Non-numeric subtypes (bool, address, tokenStandard) and the bare
+  /// `int`/`uint` aliases span the full 256-bit word.
+  int bitSize() {
+    var n = getName()!;
+    String suffix;
+    if (n.startsWith('uint')) {
+      suffix = n.substring(4);
+    } else if (n.startsWith('int')) {
+      suffix = n.substring(3);
+    } else {
+      return 256;
+    }
+    if (suffix.isEmpty) return 256;
+    var bits = int.tryParse(suffix);
+    if (bits == null || bits < 8 || bits > 256 || bits % 8 != 0) {
+      throw UnsupportedError('The type $n is not supported');
+    }
+    return bits;
+  }
 
   BigInt encodeInternal(Object? value) {
     BigInt bigInt;

@@ -45,21 +45,21 @@ class Phase extends AcceleratorProject {
         voteBreakdown: VoteBreakdown.fromJson(json['votes']),
       );
 
-  Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
-    data['id'] = id.toString();
-    data['projectId'] = projectId.toString();
-    data['name'] = name;
-    data['description'] = description;
-    data['url'] = url;
-    data['znnFundsNeeded'] = znnFundsNeeded.toString();
-    data['qsrFundsNeeded'] = qsrFundsNeeded.toString();
-    data['creationTimestamp'] = creationTimestamp;
-    data['acceptedTimestamp'] = acceptedTimestamp;
-    data['status'] = statusInt;
-    data['votes'] = voteBreakdown.toString();
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        'phase': {
+          'id': id.toString(),
+          'projectID': projectId.toString(),
+          'name': name,
+          'description': description,
+          'url': url,
+          'znnFundsNeeded': znnFundsNeeded.toString(),
+          'qsrFundsNeeded': qsrFundsNeeded.toString(),
+          'creationTimestamp': creationTimestamp,
+          'acceptedTimestamp': acceptedTimestamp,
+          'status': statusInt,
+        },
+        'votes': voteBreakdown.toJson(),
+      };
 }
 
 class Project extends AcceleratorProject {
@@ -131,7 +131,9 @@ class Project extends AcceleratorProject {
     data['creationTimestamp'] = creationTimestamp;
     data['lastUpdateTimestamp'] = lastUpdateTimestamp;
     data['status'] = statusInt;
-    data['phaseIds'] = phaseIds.toString();
+    data['phaseIds'] = phaseIds.map((id) => id.toString()).toList();
+    data['votes'] = voteBreakdown.toJson();
+    data['phases'] = phases.map((phase) => phase.toJson()).toList();
     return data;
   }
 
@@ -234,7 +236,7 @@ class ProjectList {
 
   Project? findProjectByPhaseId(Hash id) {
     for (var i = 0; i < list.length; i++) {
-      for (var j = 0; j < list[i].phaseIds.length; i++) {
+      for (var j = 0; j < list[i].phaseIds.length; j++) {
         if (id.toString() == list[i].phaseIds[j].toString()) return list[i];
       }
     }

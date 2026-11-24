@@ -92,7 +92,7 @@ class WsClient implements Client {
       } on SocketException {
         _lastRestartedEvent = false;
         if (retry == true) {
-          await Future.delayed(Duration(seconds: 5));
+          await Future.delayed(Duration(seconds: 1));
         }
       }
     } while (retry);
@@ -130,10 +130,19 @@ class WsClient implements Client {
   }
 
   @override
-  Future sendRequest(String method, [parameters]) {
+  Future sendRequest(String method, [parameters]) async {
     if (isClosed()) {
       throw noConnectionException;
     }
-    return _wsRpc2Client!.sendRequest(method, parameters);
+    try {
+      return await _wsRpc2Client!.sendRequest(method, parameters);
+    } on jsonrpc2.RpcException catch (e) {
+      throw RpcError(
+          method: method,
+          params: parameters,
+          code: e.code,
+          message: e.message,
+          data: e.data);
+    }
   }
 }
