@@ -117,4 +117,9 @@ class Address {
 
   int compareTo(Address otherAddress) =>
       toString().compareTo(otherAddress.toString());
+
+  Map<String, dynamic> toJson() => {'address': toString()};
+
+  factory Address.fromJson(Map<String, dynamic> json) =>
+      Address.parse(json['address']);
 }
