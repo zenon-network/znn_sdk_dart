@@ -62,6 +62,12 @@ class PlasmaInfo {
         maxPlasma: json['maxPlasma'],
         qsrAmount: BigInt.parse(json['qsrAmount']),
       );
+
+  Map<String, dynamic> toJson() => {
+        'currentPlasma': currentPlasma,
+        'maxPlasma': maxPlasma,
+        'qsrAmount': qsrAmount.toString(),
+      };
 }
 
 class GetRequiredParam {
