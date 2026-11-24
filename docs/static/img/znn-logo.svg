@@ -1,0 +1,9 @@
+<svg viewBox="0 0 48 77" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M47.9838 6.10352e-05H0V9.43394H30.8722L0 28.627V29.9282V39.2971V77.0001H8.36965V52.8623L39.4685 77.0001H48V71.356V29.9282H15.7518L47.9838 9.30382V6.10352e-05ZM39.4685 39.2971L39.4847 64.4595L8.36965 39.3296V39.2971H39.4685Z" fill="url(#znn-logo-gradient)"></path>
+  <defs>
+    <linearGradient id="znn-logo-gradient" x1="24" y1="0" x2="24" y2="77" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6FF34D"></stop>
+      <stop offset="1" stop-color="#4BD926" stop-opacity="0.5"></stop>
+    </linearGradient>
+  </defs>
+</svg>

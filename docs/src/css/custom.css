@@ -1,0 +1,220 @@
+/**
+ * Zenon Dart SDK docs — themed with the Zenon design system.
+ * Source of truth: https://github.com/digitalSloth/zenon-design-system
+ *
+ * The rules in one breath: the data is the hero (mono + tabular-nums for
+ * every identifier), two fonts only (Space Grotesk / JetBrains Mono),
+ * semantic tokens over raw hex, plasma gradient reserved for the single
+ * main action, ledger labels for on-chain texture, tight 6px radius,
+ * theme-aware elevation with a lit top edge on dark.
+ */
+
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
+
+:root {
+  /* --- Zenon brand tokens (design-system/tokens/colors.css) --- */
+  --zenon-green: #00d557;
+  --zenon-blue: #0061eb;
+  --zenon-pink: #f91690;
+  --zenon-black: #151515;
+  --plasma: linear-gradient(180deg, hsl(120 86% 63%) 0%, hsl(145 100% 38%) 100%);
+
+  --zenon-primary: hsl(145 100% 42%);
+  --zenon-destructive: hsl(352 84% 53%);
+  --zenon-success: hsl(145 63% 38%);
+  --zenon-warning: hsl(38 92% 50%);
+  --zenon-info: hsl(214 100% 46%);
+  --zenon-border: hsl(0 0% 90%);
+  --zenon-muted-foreground: hsl(0 0% 45%);
+
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Menlo", monospace;
+  --ledger-tracking: 0.06em;
+
+  /* --- Infima mappings (light) --- */
+  --ifm-color-primary: hsl(145 100% 34%);
+  --ifm-color-primary-dark: hsl(145 100% 30%);
+  --ifm-color-primary-darker: hsl(145 100% 28%);
+  --ifm-color-primary-darkest: hsl(145 100% 23%);
+  --ifm-color-primary-light: hsl(145 100% 38%);
+  --ifm-color-primary-lighter: hsl(145 100% 40%);
+  --ifm-color-primary-lightest: hsl(145 100% 46%);
+
+  --ifm-color-info: var(--zenon-info);
+  --ifm-color-success: var(--zenon-success);
+  --ifm-color-warning: var(--zenon-warning);
+  --ifm-color-danger: var(--zenon-destructive);
+
+  --ifm-background-color: hsl(0 0% 100%);
+  --ifm-font-color-base: hsl(0 0% 14.5%);
+
+  --ifm-font-family-base: var(--font-sans);
+  --ifm-font-family-monospace: var(--font-mono);
+  --ifm-code-font-size: 87.5%;
+  --ifm-line-height-base: 1.75;
+
+  --ifm-heading-font-weight: 600;
+  --ifm-h1-font-size: 2.25rem;
+  --ifm-h2-font-size: 1.875rem;
+  --ifm-h3-font-size: 1.5rem;
+  --ifm-h4-font-size: 1.25rem;
+
+  /* Tight radius — echoes the angular Z mark. */
+  --ifm-global-radius: 0.375rem;
+  --ifm-button-border-radius: 0.375rem;
+  --ifm-code-border-radius: 0.25rem;
+  --ifm-card-border-radius: 0.625rem;
+
+  --ifm-toc-border-color: var(--zenon-border);
+  --ifm-color-emphasis-300: hsl(0 0% 90%);
+
+  --ifm-navbar-shadow: 0 1px 0 0 var(--zenon-border);
+  --ifm-global-shadow-lw: 0 1px 3px 0 hsl(0 0% 0% / 0.08),
+    0 1px 2px -1px hsl(0 0% 0% / 0.06);
+  --ifm-global-shadow-md: 0 4px 12px -2px hsl(0 0% 0% / 0.1);
+  --ifm-global-shadow-tl: 0 12px 24px -6px hsl(0 0% 0% / 0.13);
+
+  /* Links are explorer-blue: "go look it up". Green stays for brand/nav. */
+  --ifm-link-color: var(--zenon-info);
+}
+
+/* Dark is the native habitat. */
+[data-theme='dark'] {
+  --zenon-primary: hsl(145 100% 42%);
+  --zenon-destructive: hsl(352 86% 58%);
+  --zenon-success: hsl(145 63% 45%);
+  --zenon-warning: hsl(38 95% 55%);
+  --zenon-info: hsl(214 100% 62%);
+  --zenon-border: hsl(0 0% 20%);
+  --zenon-muted-foreground: hsl(0 0% 65%);
+
+  --ifm-color-primary: hsl(145 100% 42%);
+  --ifm-color-primary-dark: hsl(145 100% 38%);
+  --ifm-color-primary-darker: hsl(145 100% 35%);
+  --ifm-color-primary-darkest: hsl(145 100% 29%);
+  --ifm-color-primary-light: hsl(145 100% 46%);
+  --ifm-color-primary-lighter: hsl(145 100% 49%);
+  --ifm-color-primary-lightest: hsl(145 86% 56%);
+
+  --ifm-background-color: hsl(0 0% 8%);
+  --ifm-background-surface-color: hsl(0 0% 7%);
+  --ifm-font-color-base: hsl(0 0% 98%);
+
+  --ifm-toc-border-color: var(--zenon-border);
+  --ifm-color-emphasis-300: hsl(0 0% 20%);
+
+  --ifm-navbar-shadow: 0 1px 0 0 var(--zenon-border);
+  /* On dark, surfaces need a deeper drop plus a lit top edge. */
+  --ifm-global-shadow-lw: 0 2px 6px -1px hsl(0 0% 0% / 0.55),
+    inset 0 1px 0 0 hsl(0 0% 100% / 0.04);
+  --ifm-global-shadow-md: 0 8px 18px -4px hsl(0 0% 0% / 0.6),
+    inset 0 1px 0 0 hsl(0 0% 100% / 0.05);
+  --ifm-global-shadow-tl: 0 14px 32px -8px hsl(0 0% 0% / 0.65),
+    inset 0 1px 0 0 hsl(0 0% 100% / 0.05);
+
+  --ifm-link-color: var(--zenon-info);
+}
+
+/* --- Type ---------------------------------------------------------------- */
+
+h1 {
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+/* Every identifier and number is mono + tabular figures. */
+code,
+kbd,
+pre {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Signature move #2: ledger labels ------------------------------------ */
+/* Mono, UPPERCASE, 11px, tracked — labels only, never values or prose. */
+
+.text-ledger,
+.menu__list .menu__list-item-collapsible > .menu__link--sublist {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--ledger-tracking);
+  color: var(--zenon-muted-foreground);
+}
+
+.menu__link {
+  border-radius: 0.375rem;
+}
+
+/* --- Signature move #1: plasma ------------------------------------------- */
+/* Reserved for the single main action (the hero CTA on the intro page). */
+
+.button.bg-plasma {
+  background-image: var(--plasma);
+  background-color: transparent;
+  border: none;
+  color: hsl(0 0% 8%);
+  font-weight: 600;
+}
+
+.button.bg-plasma:hover {
+  filter: brightness(1.1);
+  color: hsl(0 0% 8%);
+}
+
+.button.bg-plasma:active {
+  filter: brightness(0.95);
+}
+
+/* --- Chrome details ------------------------------------------------------ */
+
+.navbar__title {
+  font-weight: 700;
+}
+
+.footer--dark {
+  --ifm-footer-background-color: hsl(0 0% 7%);
+  border-top: 1px solid hsl(0 0% 20%);
+}
+
+.footer__copyright {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: var(--ledger-tracking);
+  color: hsl(0 0% 65%);
+}
+
+/* Tables: data-dense, quiet lines. */
+table {
+  font-size: 0.875rem;
+}
+
+table code {
+  white-space: nowrap;
+}
+
+/* Admonitions follow the on-chain status semantics. */
+.alert--success {
+  --ifm-alert-border-color: var(--zenon-success);
+}
+
+.alert--info {
+  --ifm-alert-border-color: var(--zenon-info);
+}
+
+.alert--warning {
+  --ifm-alert-border-color: var(--zenon-warning);
+}
+
+.alert--danger {
+  --ifm-alert-border-color: var(--zenon-destructive);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
